@@ -1,7 +1,0 @@
-/**
- * Servlet implementation class SearchPostsNGO
- */
-
-public class SearchPostsNGO extends HttpServlet {
-	
-}

@@ -1,3 +1,0 @@
-INDEX VERSION 1.131
-/Users/haiqingwang/Desktop/donation_center/DonationCollector/.metadata/.plugins/org.eclipse.jst.jsp.core/jspsearch/1524551399.index
-/donationcollector/src/main/java
