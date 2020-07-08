@@ -38,7 +38,8 @@ public class createPost extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
-		// Step 1: Read request body
+		// Add authentication step?
+		
 		JSONArray arr = RpcHelper.readJSONArray(request);
 		
 		// Do we need to keep a log of items that are failed to be uploaded
@@ -53,6 +54,7 @@ public class createPost extends HttpServlet {
 					.userType(UserType.valueOf(userObj.getString("UserType")))
 					.email(userObj.getString("email"))
 					.address(userObj.getString("address")).build();
+			
 			// Extract NGO user
 			JSONObject NGOObj = itemObj.getJSONObject("NGOUser");
 			User NGOUser = User.builder()
@@ -63,6 +65,7 @@ public class createPost extends HttpServlet {
 					.address(NGOObj.getString("address")).build();
 			
 			// Upload image to GCS and get urlToImage
+			// String urlToImage = saveToGCS(itemObj.image.toJSONObject)
 			String urlToImage = "testString";
 			
 			// Generate item UUID
@@ -85,7 +88,7 @@ public class createPost extends HttpServlet {
 					.build();
 			
 			// Save Item to ES
-			// Boolean response = saveToES(item);
+			// Boolean response = saveToES(item.toJSONObject);
 			// Log if failed to upload this item
 		}
 		
