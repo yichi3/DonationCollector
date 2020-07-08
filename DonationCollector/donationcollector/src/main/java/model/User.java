@@ -1,5 +1,8 @@
 package model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class User{
 	private String userId;
 	private String name;
@@ -53,7 +56,7 @@ public class User{
 	
 	public static class UserBuilder {
 		private String userId;
-		private String userName;
+		private String name;
 		private UserType userType;
 		private String email;
 		private String address;
