@@ -36,6 +36,7 @@ public class Item {
 		obj.put("NGO_user", NGOUser.toJSONObject());
 		obj.put("urlToImage", urlToImage);
 		obj.put("item_id", itemId);
+		obj.put("name", itemName);
 		obj.put("description", description);
 		obj.put("category", category.toString());
 		obj.put("size", size);
