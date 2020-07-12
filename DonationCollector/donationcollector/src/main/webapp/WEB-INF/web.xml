@@ -4,4 +4,24 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>createPost</servlet-name>
+  	<display-name>createPost</display-name>
+  	<description></description>
+  	<servlet-class>rpc.createPost</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>postImageTest</servlet-name>
+  	<display-name>postImageTest</display-name>
+  	<description></description>
+  	<servlet-class>rpc.postImageTest</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>createPost</servlet-name>
+  	<url-pattern>/createPost</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>postImageTest</servlet-name>
+  	<url-pattern>/postImageTest</url-pattern>
+  </servlet-mapping>
 </web-app>
