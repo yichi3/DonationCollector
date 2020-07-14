@@ -1,5 +1,7 @@
 package rpc;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,10 +36,11 @@ public class SearchPostsNGO extends HttpServlet {
     }
     
     /**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @throws IOException 
+     * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
     
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     	// assume the distance is a double for now, depending on request
     	double distance = Double.parseDouble(request.getParameter("distance"));
     	double lat = Double.parseDouble(request.getParameter("lat"));
@@ -61,8 +64,7 @@ public class SearchPostsNGO extends HttpServlet {
         
         JSONArray array = new JSONArray();
         for (SearchHit hit : hits) {
-        	// need to implement hit to json transformation!!!
-        	array.put(Geo_Service.getObjectFrom_ES_Hit(hit, Item.class));
+        	array.put(hit.getSourceAsString());
         }
         RpcHelper.writeJsonArray(response, array);
         		
