@@ -57,24 +57,28 @@ public class SearchPostsNGO extends HttpServlet {
 		// 2. Most search parameters are added to SearchsearchSourceBuilder
 		SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
-		// 3. Add a match_all query to the SearchsearchSourceBuilder
-		QueryBuilder qb = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(
-				QueryBuilders.geoDistanceQuery(POST_INDEX).point(lat, lon).distance(distance, DistanceUnit.KILOMETERS));
+		// 3. Use QueryBuilder to build queries, add them to the SearchsearchSourceBuilder
+		QueryBuilder qb = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery())
+												   .filter(QueryBuilders.geoDistanceQuery(POST_INDEX)
+														   				.point(lat, lon)
+														   				.distance(distance, DistanceUnit.KILOMETERS));
 		searchSourceBuilder.query(qb);
 
 		// 4. Add the SearchsearchSourceBuilder to the SearchRequest
 		searchRequest.source(searchSourceBuilder);
 
+		// 5. Use RestHighLevelClient to search
 		SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 		SearchHits hits = searchResponse.getHits();
 		SearchHit[] searchHits = hits.getHits();
 
+		// 6. Parse result to JSONArray
 		JSONArray array = new JSONArray();
 		for (SearchHit hit : searchHits) {
 			array.put(hit.getSourceAsString());
 		}
 		client.close();
-		
+
 		RpcHelper.writeJSONArray(response, array);
 	}
 
