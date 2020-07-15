@@ -14,10 +14,10 @@ import lombok.Getter;
 public class Item {
 	private User posterUser;
 	private User NGOUser;
-	
+
 	private String urlToImage;
 	private UUID itemId;
-	
+
 	private String itemName;
 	private String description;
 	private Category category;
@@ -26,16 +26,16 @@ public class Item {
 	private String location;
 	private Double lat;
 	private Double lon;
-	
+
 	private Status status;
 	private String pickUpDate;
-	
+
 	public JSONObject toJSONObject() {
 		JSONObject obj = new JSONObject();
 		obj.put("poster_user", posterUser.toJSONObject());
 		obj.put("NGO_user", NGOUser.toJSONObject());
 		obj.put("urlToImage", urlToImage);
-		obj.put("item_id", itemId);
+		obj.put("item_id", itemId.toString());
 		obj.put("description", description);
 		obj.put("category", category.toString());
 		obj.put("size", size);
