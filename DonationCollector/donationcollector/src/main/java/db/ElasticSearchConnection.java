@@ -1,15 +1,26 @@
 package db;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.index.query.IdsQueryBuilder;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.SearchHits;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONObject;
 
+import Entity.Item;
 import Entity.User;
 
 public class ElasticSearchConnection {
@@ -47,18 +58,89 @@ public class ElasticSearchConnection {
 	}
 
 	// placeholder
-//	public void addItem(MockItem item) {
-//
-//	}
+	public void addItem(Item item) {
+
+		JSONObject itemObj = item.toJSONObject();
+		JSONObject posterObj = itemObj.getJSONObject("poster_user");
+		String posterId = posterObj.getString("user_id");
+		JSONObject ngoObj = itemObj.getJSONObject("NGO_user");
+		String ngoId = ngoObj.getString("user_id");
+
+		String lat = itemObj.getString("lat");
+		String lon = itemObj.getString("lon");
+
+		String geoPint = lat + ", " + lon;
+
+		XContentBuilder builder;
+		try {
+			builder = XContentFactory.jsonBuilder();
+			builder.startObject();
+			{
+				builder.field("itemId", itemObj.getString("item_id"));
+				builder.field("urlToImage", itemObj.getString("urlToImage"));
+				builder.field("locationLatLon", geoPint);
+				builder.field("locationAddress", itemObj.getString("location"));
+				builder.field("posterId", posterId);
+				builder.field("category", itemObj.getString("category"));
+				builder.field("description", itemObj.getString("description"));
+				builder.field("availablePickUpTime", itemObj.getJSONArray("schedule"));
+				builder.field("itemStatus", itemObj.getString("status"));
+				builder.field("pickUpNGOId", ngoId);
+				builder.field("pickUpTime", itemObj.getString("pick_up_date"));
+				// to-fix hard-coded for now
+				builder.timeField("postDate", "2020-06-30");
+			}
+			builder.endObject();
+			IndexRequest indexRequest = new IndexRequest("items").id(itemObj.getString("item_id")).source(builder);
+			IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
+			System.out.print(response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	// helpful search API reference:
+	// https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-search.html
 
 	// placeholder
-//	public void queryItemByLocation() {
-//
-//	}
+	// public void queryItemByLocation() {
+	//
+	//
+	// }
 
-	// Placeholder
-//	public void queryItemByUserId() {
-//
-//	}	
+	// placeholder
+	// public void queryItemByUserId() {
+	//
+	//
+	// }
+
+	// to-do: we should write a util function to change the search output from ES,
+	// either in DB or outside
+	// into our classes
+	public Map<String, Object> queryItemByItemId(String itemId) {
+
+		Map<String, Object> result;
+
+		SearchRequest request = new SearchRequest("items");
+		SearchSourceBuilder scb = new SearchSourceBuilder();
+
+		IdsQueryBuilder iqb = new IdsQueryBuilder();
+		iqb.addIds(itemId);
+		scb.query(iqb);
+		request.source(scb);
+		try {
+			SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+			SearchHits hits = response.getHits();
+			SearchHit[] searchHits = hits.getHits();
+			result = searchHits[0].getSourceAsMap();
+			System.out.print(result);
+			return result;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			result = new HashMap<String, Object>();
+			return result;
+		}
+	}
 
 }

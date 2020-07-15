@@ -113,9 +113,9 @@ public class ElasticSearchIndexCreation {
 		itemsDocumentProperties.put("size", size);
 		// AvailablePickUpTime - Elastic allows array of elements of the same type by
 		// default
-		Map<String, Object> AvailablePickUpTime = new HashMap<>();
-		AvailablePickUpTime.put("type", "date");
-		itemsDocumentProperties.put("AvailablePickUpTime", AvailablePickUpTime);
+		Map<String, Object> availablePickUpTime = new HashMap<>();
+		availablePickUpTime.put("type", "date");
+		itemsDocumentProperties.put("availablePickUpTime", availablePickUpTime);
 		// itemStatus
 		Map<String, Object> itemStatus = new HashMap<>();
 		itemStatus.put("type", "text");
