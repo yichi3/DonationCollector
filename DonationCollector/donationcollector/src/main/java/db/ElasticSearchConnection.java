@@ -139,6 +139,34 @@ public class ElasticSearchConnection {
 
 	}
 
+	public ArrayList<Map<String, Object>> queryItemByPickUpNGOId(String userId) {
+
+		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+
+		SearchRequest request = new SearchRequest("items");
+		SearchSourceBuilder scb = new SearchSourceBuilder();
+
+		MatchQueryBuilder mqb = new MatchQueryBuilder("pickUpNGOId", userId);
+		scb.query(mqb);
+
+		request.source(scb);
+		try {
+			SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+			SearchHits hits = response.getHits();
+			SearchHit[] searchHits = hits.getHits();
+			for (SearchHit hit : searchHits) {
+				resultList.add(hit.getSourceAsMap());
+			}
+			return resultList;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return resultList;
+		}
+
+	}
+
 	public Map<String, Object> queryItemByItemId(String itemId) {
 
 		Map<String, Object> result;
