@@ -1,6 +1,7 @@
 package db;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.IdsQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -57,8 +59,8 @@ public class ElasticSearchConnection {
 
 	}
 
-	// placeholder
-	public void addItem(Item item) {
+	// Please change return type according to how you want status code to show up.
+	public String addItem(Item item) {
 
 		JSONObject itemObj = item.toJSONObject();
 		JSONObject posterObj = itemObj.getJSONObject("poster_user");
@@ -93,9 +95,10 @@ public class ElasticSearchConnection {
 			builder.endObject();
 			IndexRequest indexRequest = new IndexRequest("items").id(itemObj.getString("item_id")).source(builder);
 			IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-			System.out.print(response);
+			return "Success";
 		} catch (Exception e) {
 			e.printStackTrace();
+			return "Error";
 		}
 
 	}
@@ -108,15 +111,62 @@ public class ElasticSearchConnection {
 	//
 	// }
 
-	// placeholder
-	// public void queryItemByUserId() {
-	//
-	//
-	// }
+	public ArrayList<Map<String, Object>> queryItemByPosterId(String userId) {
 
-	// to-do: we should write a util function to change the search output from ES,
-	// either in DB or outside
-	// into our classes
+		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+
+		SearchRequest request = new SearchRequest("items");
+		SearchSourceBuilder scb = new SearchSourceBuilder();
+
+		MatchQueryBuilder mqb = new MatchQueryBuilder("posterId", userId);
+		scb.query(mqb);
+
+		request.source(scb);
+		try {
+			SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+			SearchHits hits = response.getHits();
+			SearchHit[] searchHits = hits.getHits();
+			for (SearchHit hit : searchHits) {
+				resultList.add(hit.getSourceAsMap());
+			}
+			return resultList;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return resultList;
+		}
+
+	}
+
+	public ArrayList<Map<String, Object>> queryItemByPickUpNGOId(String userId) {
+
+		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+
+		SearchRequest request = new SearchRequest("items");
+		SearchSourceBuilder scb = new SearchSourceBuilder();
+
+		MatchQueryBuilder mqb = new MatchQueryBuilder("pickUpNGOId", userId);
+		scb.query(mqb);
+
+		request.source(scb);
+		try {
+			SearchResponse response = client.search(request, RequestOptions.DEFAULT);
+			SearchHits hits = response.getHits();
+			SearchHit[] searchHits = hits.getHits();
+			for (SearchHit hit : searchHits) {
+				resultList.add(hit.getSourceAsMap());
+			}
+			return resultList;
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return resultList;
+		}
+
+	}
+
 	public Map<String, Object> queryItemByItemId(String itemId) {
 
 		Map<String, Object> result;
@@ -133,7 +183,7 @@ public class ElasticSearchConnection {
 			SearchHits hits = response.getHits();
 			SearchHit[] searchHits = hits.getHits();
 			result = searchHits[0].getSourceAsMap();
-			System.out.print(result);
+
 			return result;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
