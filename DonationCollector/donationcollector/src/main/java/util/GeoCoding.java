@@ -12,7 +12,7 @@ import model.GeoLocation;
 
 public class GeoCoding {
 	
-	private static final String API_KEY = "AIzaSyB7e4WzQDLffHVU8GF2A3-mUSHBFFLZAYM";
+	private static final String API_KEY = "COPY GOOGLE API_KEY HERE!!!";
 	
 	
 	public GeoLocation parseAddress(String address) throws ApiException, InterruptedException, IOException {
