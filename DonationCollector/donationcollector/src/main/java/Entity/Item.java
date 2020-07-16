@@ -1,6 +1,7 @@
 package Entity;
 
 import java.util.List;
+
 import java.util.UUID;
 
 import org.json.JSONArray;
@@ -31,6 +32,7 @@ public class Item {
 	private String pickUpDate;
 	
 	public JSONObject toJSONObject() {
+		 
 		JSONObject obj = new JSONObject();
 		obj.put("poster_user", posterUser.toJSONObject());
 		obj.put("NGO_user", NGOUser.toJSONObject());
