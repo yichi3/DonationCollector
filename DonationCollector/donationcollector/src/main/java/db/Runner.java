@@ -1,7 +1,7 @@
 package db;
 
-import Entity.User;
-import Entity.UserType;
+import entity.User;
+import entity.UserType;
 
 public class Runner {
 	public static void main(String[] args) {

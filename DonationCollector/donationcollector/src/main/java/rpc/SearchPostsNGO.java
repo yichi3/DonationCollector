@@ -1,24 +1,16 @@
 package rpc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.http.HttpHost;
-import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.common.unit.DistanceUnit;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.SearchHit;
-import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.json.JSONArray;
+
+
+import db.ElasticSearchConnection;
 
 /**
  * Servlet implementation class SearchPostsNGO
@@ -44,29 +36,18 @@ public class SearchPostsNGO extends HttpServlet {
     	// assume the distance is a double for now, depending on request
     	double distance = Double.parseDouble(request.getParameter("distance"));
     	double lat = Double.parseDouble(request.getParameter("lat"));
-		double lon = Double.parseDouble(request.getParameter("lon")); 
-		RestHighLevelClient client = new RestHighLevelClient(
-				RestClient.builder(new HttpHost("35.225.69.232", 9200, "http")));
-		
-		SearchRequest searchRequest = new SearchRequest();
-		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-		QueryBuilder query = QueryBuilders.matchAllQuery();
-		QueryBuilder geoDistanceQueryBuilder = QueryBuilders
-	            .geoDistanceQuery("geoPoint")
-	            .point(lat, lon)
-	            .distance(distance, DistanceUnit.KILOMETERS);
-		QueryBuilder finalQuery = QueryBuilders.boolQuery().must(query).filter(geoDistanceQueryBuilder);
-		sourceBuilder.query(finalQuery);
-        searchRequest.source(sourceBuilder);
-        
-        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-        SearchHits hits = searchResponse.getHits();
-        
-        JSONArray array = new JSONArray();
-        for (SearchHit hit : hits) {
-        	array.put(hit.getSourceAsString());
+		double lng = Double.parseDouble(request.getParameter("lon")); 
+		ElasticSearchConnection connection = new ElasticSearchConnection();
+		ArrayList<Map<String, Object>> hits = connection.queryItemByLocation(lat, lng, distance);
+        for (Map<String, Object> hit : hits) {
+        	// need to parse map
         }
-        RpcHelper.writeJsonArray(response, array);
+        // original code: 
+        //JSONArray array = new JSONArray();
+        // for (SearchHit hit : hits) {
+        //	array.put(hit.getSourceAsString());
+        //}
+        //RpcHelper.writeJsonArray(response, array);
         		
     }
 }

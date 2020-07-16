@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import Entity.Category;
-import Entity.Item;
-import Entity.Status;
-import Entity.User;
-import Entity.UserType;
+import entity.Category;
+import entity.Item;
+import entity.Status;
+import entity.User;
+import entity.UserType;
 
 /**
  * Servlet implementation class createPost

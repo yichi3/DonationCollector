@@ -13,17 +13,21 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestClient;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.common.unit.DistanceUnit;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import Entity.Item;
-import Entity.User;
+import entity.Item;
+import entity.User;
 
 public class ElasticSearchConnection {
 	private RestHighLevelClient client;
@@ -106,10 +110,29 @@ public class ElasticSearchConnection {
 	// https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-search.html
 
 	// placeholder
-	// public void queryItemByLocation() {
-	//
-	//
-	// }
+	public ArrayList<Map<String, Object>> queryItemByLocation(double lat, double lng, double distance) throws IOException {
+		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+		SearchRequest searchRequest = new SearchRequest();
+		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+		QueryBuilder query = QueryBuilders.matchAllQuery();
+		QueryBuilder geoDistanceQueryBuilder = QueryBuilders
+	            .geoDistanceQuery("geoPoint")
+	            .point(lat, lng)
+	            .distance(distance, DistanceUnit.KILOMETERS);
+		QueryBuilder finalQuery = QueryBuilders.boolQuery().must(query).filter(geoDistanceQueryBuilder);
+		sourceBuilder.query(finalQuery);
+        searchRequest.source(sourceBuilder);
+        
+        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+        SearchHits hits = searchResponse.getHits();
+        
+     
+        for (SearchHit hit : hits) {
+        	resultList.add(hit.getSourceAsMap());
+        }
+        return resultList;
+
+	}
 
 	public ArrayList<Map<String, Object>> queryItemByPosterId(String userId) {
 

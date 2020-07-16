@@ -1,13 +1,15 @@
 package rpc;
 
 import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import db.ElasticSearchConnection;
+import entity.Item;
+import entity.Status;
 
 public class ConfirmPickUp extends HttpServlet {
 	
@@ -20,20 +22,20 @@ public class ConfirmPickUp extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 	
-	public void doPost(HttpServletRequest request, HttpServletResponse response) {
+	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String itemId = request.getParameter("item_id");
 		
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		
 		Map<String, Object>  hit = connection.queryItemByItemId(itemId);
-		if (result == null || !result.containsKey("item_id")) {
+		if (hit == null || !hit.containsKey("item_id")) {
 			response.sendError(404, "cannot find this item");
 			return;
 		}
 		
-		Item item = hit.get("item_id");
-		item.getBuilder().status(Status.COLLECTED).build();
-		connection.add(item);
+		Item item = (Item) hit.get("item_id");
+		item.builder().status(Status.COLLECTED).build();
+		connection.addItem(item);
 		response.setStatus(204);
 	}
 

@@ -8,7 +8,7 @@ import com.google.maps.errors.ApiException;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 
-import model.GeoLocation;
+import entity.GeoLocation;
 
 public class GeoCoding {
 	
