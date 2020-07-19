@@ -32,11 +32,11 @@ public class Item {
 	
 	public JSONObject toJSONObject() {
 		JSONObject obj = new JSONObject();
-		obj.put("poster_user", posterUser.toJSONObject());
-		obj.put("NGO_user", NGOUser.toJSONObject());
+		obj.put("posterUser", posterUser.toJSONObject());
+		obj.put("NGOUser", NGOUser.toJSONObject());
 		obj.put("urlToImage", urlToImage);
-		obj.put("item_id", itemId);
-		obj.put("name", itemName);
+		obj.put("itemId", itemId);
+		obj.put("itemName", itemName);
 		obj.put("description", description);
 		obj.put("category", category.toString());
 		obj.put("size", size);
@@ -45,7 +45,7 @@ public class Item {
 		obj.put("lat", lat.toString());
 		obj.put("lon", lon.toString());
 		obj.put("status", status.toString());
-		obj.put("pick_up_date", pickUpDate);
+		obj.put("pickUpDate", pickUpDate);
 		return obj;
 	}
 }

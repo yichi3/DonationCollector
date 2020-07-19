@@ -48,6 +48,7 @@ public class createPost extends HttpServlet {
 		// Add authentication step?
 
 		if (ServletFileUpload.isMultipartContent(request)) {
+			// Read data from stream
 			final FileItemFactory fileItemFactory = new DiskFileItemFactory();
 			final ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 			List<FileItem> items = new ArrayList<>();
@@ -59,6 +60,7 @@ public class createPost extends HttpServlet {
 				e.printStackTrace();
 			}
 
+			// Initialize item info array and list of images uploaded
 			JSONArray itemInfo = new JSONArray();
 			List<FileItem> itemImages = new ArrayList<>();
 			
@@ -77,6 +79,7 @@ public class createPost extends HttpServlet {
 			// Get list of itemImages
 			itemImages = items;
 			
+			// For test purpose
 			System.out.println(itemImages.size());
 			System.out.println(itemInfo.length());
 			
@@ -85,8 +88,8 @@ public class createPost extends HttpServlet {
 				JSONObject itemObj = itemInfo.getJSONObject(i);
 				// Extract poster user
 				JSONObject userObj = itemObj.getJSONObject("posterUser");
-				User posterUser = User.builder().userId(userObj.getString("user_id")).name(userObj.getString("name"))
-						.userType(UserType.valueOf(userObj.getString("UserType"))).email(userObj.getString("email"))
+				User posterUser = User.builder().userId(userObj.getString("userId")).name(userObj.getString("name"))
+						.userType(UserType.valueOf(userObj.getString("userType"))).email(userObj.getString("email"))
 						.address(userObj.getString("address")).build();
 
 				// Extract NGO user
@@ -104,14 +107,14 @@ public class createPost extends HttpServlet {
 				UUID itemId = UUID.randomUUID();
 
 				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
-						.itemName(itemObj.getString("name"))
+						.itemName(itemObj.getString("itemName"))
 						.description(itemObj.getString("description"))
 						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
 						.location(itemObj.getString("location")).lat(Double.parseDouble(itemObj.getString("lat")))
 						.lon(Double.parseDouble(itemObj.getString("lon")))
 						.status(Status.valueOf(itemObj.getString("status")))
-						.pickUpDate(itemObj.getString("pick_up_date")).build();
+						.pickUpDate(itemObj.getString("pickUpDate")).build();
 
 				// Save Item to ES
 				// Boolean response = saveToES(item.toJSONObject);

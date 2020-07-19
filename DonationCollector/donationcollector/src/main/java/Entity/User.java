@@ -16,9 +16,9 @@ public class User {
 	
 	public JSONObject toJSONObject() {
 		JSONObject obj = new JSONObject();
-		obj.put("user_id", userId);
+		obj.put("userId", userId);
 		obj.put("name", name);
-		obj.put("UserType", userType.toString());
+		obj.put("userType", userType.toString());
 		obj.put("email", email);
 		obj.put("address", address);
 		return obj;
