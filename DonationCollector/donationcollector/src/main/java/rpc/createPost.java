@@ -39,6 +39,7 @@ public class createPost extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {
 		// Add authentication step?
+<<<<<<< HEAD
 		
 		JSONArray arr = RpcHelper.readJSONArray(request);
 		
@@ -63,11 +64,31 @@ public class createPost extends HttpServlet {
 					.userType(UserType.valueOf(NGOObj.getString("UserType")))
 					.email(NGOObj.getString("email"))
 					.address(NGOObj.getString("address")).build();
+=======
+
+		if (ServletFileUpload.isMultipartContent(request)) {
+			// Read data from stream
+			final FileItemFactory fileItemFactory = new DiskFileItemFactory();
+			final ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
+			List<FileItem> items = new ArrayList<>();
+			
+			try {
+				items = uploadHandler.parseRequest(request);
+			} catch (FileUploadException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			// Initialize item info array and list of images uploaded
+			JSONArray itemInfo = new JSONArray();
+			List<FileItem> itemImages = new ArrayList<>();
+>>>>>>> 26f4e3a... Create Post v5
 			
 			// Upload image to GCS and get urlToImage
 			// String urlToImage = saveToGCS(itemObj.image.toJSONObject)
 			String urlToImage = "testString";
 			
+<<<<<<< HEAD
 			// Generate item UUID
 			UUID itemId = UUID.randomUUID();
 			
@@ -90,6 +111,53 @@ public class createPost extends HttpServlet {
 			// Save Item to ES
 			// Boolean response = saveToES(item.toJSONObject);
 			// Log if failed to upload this item
+=======
+			// For test purpose
+			System.out.println(itemImages.size());
+			System.out.println(itemInfo.length());
+			
+			// Do we need to keep a log of items that are failed to be uploaded
+			for (int i = 0; i < itemInfo.length(); i++) {
+				JSONObject itemObj = itemInfo.getJSONObject(i);
+				// Extract poster user
+				JSONObject userObj = itemObj.getJSONObject("posterUser");
+				User posterUser = User.builder().userId(userObj.getString("userId")).name(userObj.getString("name"))
+						.userType(UserType.valueOf(userObj.getString("userType"))).email(userObj.getString("email"))
+						.address(userObj.getString("address")).build();
+
+				// Extract NGO user
+				JSONObject NGOObj = itemObj.getJSONObject("NGOUser");
+				User NGOUser = User.builder().userId(NGOObj.getString("user_id")).name(NGOObj.getString("name"))
+						.userType(UserType.valueOf(NGOObj.getString("UserType"))).email(NGOObj.getString("email"))
+						.address(NGOObj.getString("address")).build();
+
+				// Upload image to GCS and get urlToImage
+				// FileItem image = itemImages.get(i);
+				// String urlToImage = saveToGCS(image);
+				String urlToImage = "testString" + i;
+
+				// Generate item UUID
+				UUID itemId = UUID.randomUUID();
+
+				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
+						.itemName(itemObj.getString("itemName"))
+						.description(itemObj.getString("description"))
+						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
+						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
+						.location(itemObj.getString("location")).lat(Double.parseDouble(itemObj.getString("lat")))
+						.lon(Double.parseDouble(itemObj.getString("lon")))
+						.status(Status.valueOf(itemObj.getString("status")))
+						.pickUpDate(itemObj.getString("pickUpDate")).build();
+
+				// Save Item to ES
+				// Boolean response = saveToES(item.toJSONObject);
+				// Log if failed to upload this item
+				
+				response.setContentType("application/json");
+				response.getWriter().print(item.toJSONObject());
+				response.getWriter().write("You have successfully uploaded all items");
+			}
+>>>>>>> 26f4e3a... Create Post v5
 		}
 		
 		response.setContentType("application/json");
