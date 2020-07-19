@@ -2,7 +2,9 @@ package db;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.http.HttpHost;
@@ -20,10 +22,13 @@ import org.elasticsearch.index.query.IdsQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.BulkByScrollResponse;
+import org.elasticsearch.index.reindex.UpdateByQueryRequest;
+import org.elasticsearch.script.Script;
+import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import entity.Item;
@@ -64,7 +69,7 @@ public class ElasticSearchConnection {
 	}
 
 	// Please change return type according to how you want status code to show up.
-	public String addItem(Item item) {
+	public Map<String, Object> addItem(Item item) {
 
 		JSONObject itemObj = item.toJSONObject();
 		JSONObject posterObj = itemObj.getJSONObject("poster_user");
@@ -99,10 +104,12 @@ public class ElasticSearchConnection {
 			builder.endObject();
 			IndexRequest indexRequest = new IndexRequest("items").id(itemObj.getString("item_id")).source(builder);
 			IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-			return "Success";
+			Map<String, Object> queryResult = queryItemByItemId(itemObj.getString("item_id"));
+
+			return queryResult;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return "Error";
+			return new HashMap<String, Object>();
 		}
 
 	}
@@ -110,31 +117,36 @@ public class ElasticSearchConnection {
 	// https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-search.html
 
 	// placeholder
-	public ArrayList<Map<String, Object>> queryItemByLocation(double lat, double lng, double distance) throws IOException {
+	public ArrayList<Map<String, Object>> queryItemByLocation(double lat, double lng, double distance)
+			throws IOException {
+
 		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-		SearchRequest searchRequest = new SearchRequest();
+
+		SearchRequest searchRequest = new SearchRequest("items");
+
 		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+
 		QueryBuilder query = QueryBuilders.matchAllQuery();
-		QueryBuilder geoDistanceQueryBuilder = QueryBuilders
-	            .geoDistanceQuery("geoPoint")
-	            .point(lat, lng)
-	            .distance(distance, DistanceUnit.KILOMETERS);
+		QueryBuilder geoDistanceQueryBuilder = QueryBuilders.geoDistanceQuery("locationLatLon").point(lat, lng)
+				.distance(distance, DistanceUnit.KILOMETERS);
 		QueryBuilder finalQuery = QueryBuilders.boolQuery().must(query).filter(geoDistanceQueryBuilder);
 		sourceBuilder.query(finalQuery);
-        searchRequest.source(sourceBuilder);
-        
-        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-        SearchHits hits = searchResponse.getHits();
-        
-     
-        for (SearchHit hit : hits) {
-        	resultList.add(hit.getSourceAsMap());
-        }
-        return resultList;
+		searchRequest.source(sourceBuilder);
+
+		try {
+			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+			SearchHits hits = searchResponse.getHits();
+			for (SearchHit hit : hits) {
+				resultList.add(hit.getSourceAsMap());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return resultList;
 
 	}
 
-	public ArrayList<Map<String, Object>> queryItemByPosterId(String userId) {
+	public List<Map<String, Object>> queryItemByPosterId(String userId) {
 
 		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 
@@ -162,7 +174,7 @@ public class ElasticSearchConnection {
 
 	}
 
-	public ArrayList<Map<String, Object>> queryItemByPickUpNGOId(String userId) {
+	public List<Map<String, Object>> queryItemByPickUpNGOId(String userId) {
 
 		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 
@@ -205,6 +217,10 @@ public class ElasticSearchConnection {
 			SearchResponse response = client.search(request, RequestOptions.DEFAULT);
 			SearchHits hits = response.getHits();
 			SearchHit[] searchHits = hits.getHits();
+			if (searchHits.length == 0) {
+				result = new HashMap<String, Object>();
+				return result;
+			}
 			result = searchHits[0].getSourceAsMap();
 
 			return result;
@@ -213,6 +229,59 @@ public class ElasticSearchConnection {
 			e.printStackTrace();
 			result = new HashMap<String, Object>();
 			return result;
+		}
+	}
+
+	public Map<String, Object> updateItemPickUpInfo(String itemId, String NGOId, String pickUpTime) {
+
+		UpdateByQueryRequest request = new UpdateByQueryRequest("items");
+
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("if (ctx._source.itemId == ");
+		queryString.append("'" + itemId + "'");
+		queryString.append("&& ctx._source.itemStatus == 'PENDING') { " + "ctx._source.pickUpNGOId = ");
+		queryString.append("'" + NGOId + "';");
+		queryString.append("ctx._source.pickUpTime = ");
+		queryString.append("'" + pickUpTime + "';");
+		queryString.append("ctx._source.itemStatus = 'SCHEDULED';}");
+
+		request.setScript(new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap()));
+
+		try {
+			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
+			System.out.print(bulkResponse);
+			Map<String, Object> queryResult = queryItemByItemId(itemId);
+			return queryResult;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// Given error, return empty map
+			return new HashMap<String, Object>();
+		}
+
+	}
+
+	public Map<String, Object> deleteItem(String itemId) {
+
+		UpdateByQueryRequest request = new UpdateByQueryRequest("items");
+
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("if (ctx._source.itemId == ");
+		queryString.append("'" + itemId + "'");
+		queryString.append("&& ctx._source.itemStatus == 'PENDING') { " + "ctx._source.itemStatus = 'DELETED';}");
+
+		request.setScript(new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap()));
+
+		try {
+			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
+			System.out.print(bulkResponse);
+			Map<String, Object> queryResult = queryItemByItemId(itemId);
+			return queryResult;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// Given error, return empty map
+			return new HashMap<String, Object>();
 		}
 	}
 
