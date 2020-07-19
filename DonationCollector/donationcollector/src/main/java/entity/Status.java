@@ -1,5 +1,5 @@
 package entity;
 
 public enum Status {
-	PENDING, SCHEDULED, COLLECTED;
+	PENDING, SCHEDULED, COLLECTED, DELETED;
 }
