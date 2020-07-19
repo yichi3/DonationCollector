@@ -29,7 +29,6 @@ import org.elasticsearch.script.ScriptType;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import entity.Item;
@@ -118,27 +117,32 @@ public class ElasticSearchConnection {
 	// https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-search.html
 
 	// placeholder
-	public ArrayList<Map<String, Object>> queryItemByLocation(double lat, double lng, double distance) throws IOException {
+	public ArrayList<Map<String, Object>> queryItemByLocation(double lat, double lng, double distance)
+			throws IOException {
+
 		ArrayList<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-		SearchRequest searchRequest = new SearchRequest();
+
+		SearchRequest searchRequest = new SearchRequest("items");
+
 		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+
 		QueryBuilder query = QueryBuilders.matchAllQuery();
-		QueryBuilder geoDistanceQueryBuilder = QueryBuilders
-	            .geoDistanceQuery("geoPoint")
-	            .point(lat, lng)
-	            .distance(distance, DistanceUnit.KILOMETERS);
+		QueryBuilder geoDistanceQueryBuilder = QueryBuilders.geoDistanceQuery("locationLatLon").point(lat, lng)
+				.distance(distance, DistanceUnit.KILOMETERS);
 		QueryBuilder finalQuery = QueryBuilders.boolQuery().must(query).filter(geoDistanceQueryBuilder);
 		sourceBuilder.query(finalQuery);
-        searchRequest.source(sourceBuilder);
-        
-        SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
-        SearchHits hits = searchResponse.getHits();
-        
-     
-        for (SearchHit hit : hits) {
-        	resultList.add(hit.getSourceAsMap());
-        }
-        return resultList;
+		searchRequest.source(sourceBuilder);
+
+		try {
+			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
+			SearchHits hits = searchResponse.getHits();
+			for (SearchHit hit : hits) {
+				resultList.add(hit.getSourceAsMap());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return resultList;
 
 	}
 
