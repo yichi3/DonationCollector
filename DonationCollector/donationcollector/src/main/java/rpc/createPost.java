@@ -94,8 +94,8 @@ public class createPost extends HttpServlet {
 
 				// Extract NGO user
 				JSONObject NGOObj = itemObj.getJSONObject("NGOUser");
-				User NGOUser = User.builder().userId(NGOObj.getString("user_id")).name(NGOObj.getString("name"))
-						.userType(UserType.valueOf(NGOObj.getString("UserType"))).email(NGOObj.getString("email"))
+				User NGOUser = User.builder().userId(NGOObj.getString("userId")).name(NGOObj.getString("name"))
+						.userType(UserType.valueOf(NGOObj.getString("userType"))).email(NGOObj.getString("email"))
 						.address(NGOObj.getString("address")).build();
 
 				// Upload image to GCS and get urlToImage
