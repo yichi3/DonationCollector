@@ -285,4 +285,15 @@ public class ElasticSearchConnection {
 		}
 	}
 
+	public void close() throws Exception {
+		try {
+			System.out.print("Closing elasticSearch  client");
+			if (client != null) {
+				client.close();
+			}
+		} catch (final Exception e) {
+			System.out.print("Error closing ElasticSearch client: " + e);
+		}
+	}
+
 }
