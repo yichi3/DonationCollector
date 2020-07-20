@@ -3,6 +3,9 @@ package rpc;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -10,6 +13,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,11 +26,6 @@ import entity.Item;
 import entity.Status;
 import entity.User;
 import entity.UserType;
-import Entity.Category;
-import Entity.Item;
-import Entity.Status;
-import Entity.User;
-import Entity.UserType;
 import db.GCSConnection;
 
 /**
@@ -30,19 +33,20 @@ import db.GCSConnection;
  */
 public class createPost extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public createPost() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+	public createPost() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// Add authentication step?
 
@@ -51,7 +55,7 @@ public class createPost extends HttpServlet {
 			final FileItemFactory fileItemFactory = new DiskFileItemFactory();
 			final ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 			List<FileItem> items = new ArrayList<>();
-			
+
 			try {
 				items = uploadHandler.parseRequest(request);
 			} catch (FileUploadException e) {
@@ -62,14 +66,25 @@ public class createPost extends HttpServlet {
 			// Initialize item info array and list of images uploaded
 			JSONArray itemInfo = new JSONArray();
 			List<FileItem> itemImages = new ArrayList<>();
-			
-			// Upload image to GCS and get urlToImage
-			// String urlToImage = saveToGCS(itemObj.image.toJSONObject)
-			String urlToImage = "testString";
-			
+
+			for (Iterator<FileItem> it = items.iterator(); it.hasNext();) {
+				final FileItem item = (FileItem) it.next();
+
+				if (!item.isFormField()) {
+					// for debug purposes
+					System.out.println("File Uploaded");
+					System.out.println(item.getContentType());
+				} else {
+					itemInfo = new JSONArray(item.getString());
+					it.remove();
+				}
+			}
+			// Get list of itemImages
+			itemImages = items;
+
 			// For test purpose
 			System.out.println(itemImages.get(0).getInputStream().toString());
-			
+
 			// Do we need to keep a log of items that are failed to be uploaded
 			for (int i = 0; i < itemInfo.length(); i++) {
 				JSONObject itemObj = itemInfo.getJSONObject(i);
@@ -87,35 +102,32 @@ public class createPost extends HttpServlet {
 
 				// Upload image to GCS and get urlToImage
 				// FileItem image = itemImages.get(i);
-			
+
 				// Generate item UUID
 				UUID itemId = UUID.randomUUID();
 
 				// Save to GCS
 				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);
-				
+
 				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
-						.itemName(itemObj.getString("itemName"))
-						.description(itemObj.getString("description"))
+						.itemName(itemObj.getString("itemName")).description(itemObj.getString("description"))
 						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
 						.location(itemObj.getString("location")).lat(Double.parseDouble(itemObj.getString("lat")))
 						.lon(Double.parseDouble(itemObj.getString("lon")))
-						.status(Status.valueOf(itemObj.getString("status")))
-						.pickUpDate(itemObj.getString("pickUpDate")).build();
+						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(itemObj.getString("pickUpDate"))
+						.build();
 
 				// Save Item to ES
 				// Boolean response = saveToES(item.toJSONObject);
 				// Log if failed to upload this item
-				
+
 				response.setContentType("application/json");
 				response.getWriter().print(item.toJSONObject());
 				response.getWriter().write("You have successfully uploaded all items");
 			}
 		}
-		
-		response.setContentType("application/json");
-		response.getWriter().write("You have successfully uploaded all items");
+
 	}
- 
+
 }
