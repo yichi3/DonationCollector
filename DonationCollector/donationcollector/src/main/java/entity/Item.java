@@ -35,7 +35,11 @@ public class Item {
 		obj.put("posterUser", posterUser.toJSONObject());
 		obj.put("NGOUser", NGOUser.toJSONObject());
 		obj.put("urlToImage", urlToImage);
+<<<<<<< HEAD:DonationCollector/donationcollector/src/main/java/entity/Item.java
 		obj.put("itemId", itemId.toString());
+=======
+		obj.put("itemId", itemId);
+>>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80:DonationCollector/donationcollector/src/main/java/Entity/Item.java
 		obj.put("itemName", itemName);
 		obj.put("description", description);
 		obj.put("category", category.toString());
