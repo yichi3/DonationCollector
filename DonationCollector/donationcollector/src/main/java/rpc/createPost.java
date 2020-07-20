@@ -24,6 +24,7 @@ import Entity.Item;
 import Entity.Status;
 import Entity.User;
 import Entity.UserType;
+import db.GCSConnection;
 
 /**
  * Servlet implementation class createPost
@@ -80,8 +81,7 @@ public class createPost extends HttpServlet {
 			itemImages = items;
 			
 			// For test purpose
-			System.out.println(itemImages.size());
-			System.out.println(itemInfo.length());
+			System.out.println(itemImages.get(0).getInputStream().toString());
 			
 			// Do we need to keep a log of items that are failed to be uploaded
 			for (int i = 0; i < itemInfo.length(); i++) {
@@ -100,12 +100,13 @@ public class createPost extends HttpServlet {
 
 				// Upload image to GCS and get urlToImage
 				// FileItem image = itemImages.get(i);
-				// String urlToImage = saveToGCS(image);
-				String urlToImage = "testString" + i;
-
+			
 				// Generate item UUID
 				UUID itemId = UUID.randomUUID();
 
+				// Save to GCS
+				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);
+				
 				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
 						.itemName(itemObj.getString("itemName"))
 						.description(itemObj.getString("description"))
