@@ -79,9 +79,6 @@ public class createPost extends HttpServlet {
 			// Get list of itemImages
 			itemImages = items;
 
-			// For test purpose
-			System.out.println(itemImages.get(0).getInputStream().toString());
-
 			// Do we need to keep a log of items that are failed to be uploaded
 			for (int i = 0; i < itemInfo.length(); i++) {
 				JSONObject itemObj = itemInfo.getJSONObject(i);
