@@ -1,10 +1,7 @@
 package rpc;
 
 import java.io.IOException;
-<<<<<<< HEAD
 import java.io.PrintWriter;
-=======
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -23,19 +20,11 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-<<<<<<< HEAD
 import entity.Category;
 import entity.Item;
 import entity.Status;
 import entity.User;
 import entity.UserType;
-=======
-import Entity.Category;
-import Entity.Item;
-import Entity.Status;
-import Entity.User;
-import Entity.UserType;
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 import db.GCSConnection;
 
 /**
@@ -65,11 +54,6 @@ public class createPost extends HttpServlet {
 			final FileItemFactory fileItemFactory = new DiskFileItemFactory();
 			final ServletFileUpload uploadHandler = new ServletFileUpload(fileItemFactory);
 			List<FileItem> items = new ArrayList<>();
-<<<<<<< HEAD
-
-=======
-			
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 			try {
 				items = uploadHandler.parseRequest(request);
 			} catch (FileUploadException e) {
@@ -80,11 +64,6 @@ public class createPost extends HttpServlet {
 			// Initialize item info array and list of images uploaded
 			JSONArray itemInfo = new JSONArray();
 			List<FileItem> itemImages = new ArrayList<>();
-<<<<<<< HEAD
-
-=======
-			
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 			for (Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 				final FileItem item = (FileItem) it.next();
 
@@ -99,17 +78,10 @@ public class createPost extends HttpServlet {
 			}
 			// Get list of itemImages
 			itemImages = items;
-<<<<<<< HEAD
 
 			// For test purpose
 			System.out.println(itemImages.get(0).getInputStream().toString());
 
-=======
-			
-			// For test purpose
-			System.out.println(itemImages.get(0).getInputStream().toString());
-			
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 			// Do we need to keep a log of items that are failed to be uploaded
 			for (int i = 0; i < itemInfo.length(); i++) {
 				JSONObject itemObj = itemInfo.getJSONObject(i);
@@ -127,46 +99,24 @@ public class createPost extends HttpServlet {
 
 				// Upload image to GCS and get urlToImage
 				// FileItem image = itemImages.get(i);
-<<<<<<< HEAD
-
-=======
-			
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 				// Generate item UUID
 				UUID itemId = UUID.randomUUID();
 
 				// Save to GCS
 				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);
-<<<<<<< HEAD
 
 				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
 						.itemName(itemObj.getString("itemName")).description(itemObj.getString("description"))
-=======
-				
-				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
-						.itemName(itemObj.getString("itemName"))
-						.description(itemObj.getString("description"))
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
 						.location(itemObj.getString("location")).lat(Double.parseDouble(itemObj.getString("lat")))
 						.lon(Double.parseDouble(itemObj.getString("lon")))
-<<<<<<< HEAD
 						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(itemObj.getString("pickUpDate"))
 						.build();
-=======
-						.status(Status.valueOf(itemObj.getString("status")))
-						.pickUpDate(itemObj.getString("pickUpDate")).build();
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 
 				// Save Item to ES
 				// Boolean response = saveToES(item.toJSONObject);
 				// Log if failed to upload this item
-<<<<<<< HEAD
-
-=======
-				
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 				response.setContentType("application/json");
 				response.getWriter().print(item.toJSONObject());
 				response.getWriter().write("You have successfully uploaded all items");
@@ -174,8 +124,4 @@ public class createPost extends HttpServlet {
 		}
 
 	}
-<<<<<<< HEAD
-
-=======
->>>>>>> a038e26c47ea2c00aeadd011ffa416d216e90c80
 }
