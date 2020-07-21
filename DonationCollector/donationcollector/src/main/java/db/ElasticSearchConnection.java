@@ -285,6 +285,32 @@ public class ElasticSearchConnection {
 		}
 	}
 
+	public Map<String, Object> markItemComplete(String itemId, String NGOId) {
+
+		UpdateByQueryRequest request = new UpdateByQueryRequest("items");
+
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("if (ctx._source.itemId == ");
+		queryString.append("'" + itemId + "'");
+		queryString.append("&& ctx._source.itemStatus == 'SCHEDULED' && ctx._source.pickUpNGOId == ");
+		queryString.append("'" + NGOId + "')");
+		queryString.append("{ctx._source.itemStatus = 'COLLECTED';}");
+
+		request.setScript(new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap()));
+
+		try {
+			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
+			System.out.print(bulkResponse);
+			Map<String, Object> queryResult = queryItemByItemId(itemId);
+			return queryResult;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			// Given error, return empty map
+			return new HashMap<String, Object>();
+		}
+	}
+
 	public void close() throws Exception {
 		try {
 			System.out.print("Closing elasticSearch  client");
