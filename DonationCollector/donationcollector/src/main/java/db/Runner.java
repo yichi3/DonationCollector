@@ -66,7 +66,12 @@ public class Runner {
 				.status(Status.SCHEDULED).pickUpDate("2020-06-10").build();
 		// Then call the ES client's addItem method to upload to ES
 		es.addItem(item4);
-
+		try {
+			es.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 //
 //		}
 	}
