@@ -99,6 +99,13 @@ public class ElasticSearchIndexCreation {
 		Map<String, Object> posterId = new HashMap<>();
 		posterId.put("type", "text");
 		itemsDocumentProperties.put("posterId", posterId);
+		// posterFirstName
+		Map<String, Object> posterFirstName = new HashMap<>();
+		posterFirstName.put("type", "text");
+		// posterLastName
+		Map<String, Object> posterLastName = new HashMap<>();
+		posterLastName.put("type", "text");
+		itemsDocumentProperties.put("posterId", posterId);
 		// category
 		Map<String, Object> category = new HashMap<>();
 		category.put("type", "text");
@@ -124,6 +131,10 @@ public class ElasticSearchIndexCreation {
 		Map<String, Object> pickUpNGOId = new HashMap<>();
 		pickUpNGOId.put("type", "text");
 		itemsDocumentProperties.put("pickUpNGOId", pickUpNGOId);
+		// pickUpNGOName
+		Map<String, Object> pickUpNGOName = new HashMap<>();
+		pickUpNGOName.put("type", "text");
+		itemsDocumentProperties.put("pickUpNGOName", pickUpNGOName);
 		// selectedPickUpTime
 		Map<String, Object> selectedPickUpTime = new HashMap<>();
 		selectedPickUpTime.put("type", "date");
