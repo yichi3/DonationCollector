@@ -137,7 +137,6 @@ public class ElasticSearchConnection {
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 			SearchHits hits = searchResponse.getHits();
 			for (SearchHit hit : hits) {
-				System.out.print(hit);
 				resultList.add(hit.getSourceAsMap());
 			}
 		} catch (IOException e) {
