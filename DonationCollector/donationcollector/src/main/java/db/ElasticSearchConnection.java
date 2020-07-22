@@ -126,7 +126,7 @@ public class ElasticSearchConnection {
 
 		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
-		QueryBuilder query = QueryBuilders.matchAllQuery();
+		MatchQueryBuilder query = new MatchQueryBuilder("itemStatus", "PENDING");
 		QueryBuilder geoDistanceQueryBuilder = QueryBuilders.geoDistanceQuery("locationLatLon").point(lat, lng)
 				.distance(distance, DistanceUnit.KILOMETERS);
 		QueryBuilder finalQuery = QueryBuilders.boolQuery().must(query).filter(geoDistanceQueryBuilder);
@@ -137,6 +137,7 @@ public class ElasticSearchConnection {
 			SearchResponse searchResponse = client.search(searchRequest, RequestOptions.DEFAULT);
 			SearchHits hits = searchResponse.getHits();
 			for (SearchHit hit : hits) {
+				System.out.print(hit);
 				resultList.add(hit.getSourceAsMap());
 			}
 		} catch (IOException e) {
