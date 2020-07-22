@@ -126,7 +126,7 @@ public class ElasticSearchConnection {
 
 		SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
 
-		QueryBuilder query = QueryBuilders.matchAllQuery();
+		MatchQueryBuilder query = new MatchQueryBuilder("itemStatus", "PENDING");
 		QueryBuilder geoDistanceQueryBuilder = QueryBuilders.geoDistanceQuery("locationLatLon").point(lat, lng)
 				.distance(distance, DistanceUnit.KILOMETERS);
 		QueryBuilder finalQuery = QueryBuilders.boolQuery().must(query).filter(geoDistanceQueryBuilder);
