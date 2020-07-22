@@ -50,6 +50,7 @@ public class SchedulePickUp extends HttpServlet {
 		
 
 		ElasticSearchConnection connection = new ElasticSearchConnection();
+		connection.elasticSearchConnection();
 
 		Map<String, Object> hit = connection.updateItemPickUpInfo(itemId, ngoId, availablePickUpTime);
 		if (hit.isEmpty()) {

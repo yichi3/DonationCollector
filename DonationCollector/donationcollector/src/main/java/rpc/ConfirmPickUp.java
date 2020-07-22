@@ -19,7 +19,6 @@ public class ConfirmPickUp extends HttpServlet {
 	
 	public ConfirmPickUp() {
         super();
-        // TODO Auto-generated constructor stub
     }
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -27,8 +26,10 @@ public class ConfirmPickUp extends HttpServlet {
 		String ngoId = request.getParameter("pickUpNGOId");
 		
 		ElasticSearchConnection connection = new ElasticSearchConnection();
+		connection.elasticSearchConnection();
 		
 		Map<String, Object> hit = connection.markItemComplete(itemId, ngoId);
+		System.out.println(hit);
 		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;

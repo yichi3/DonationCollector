@@ -27,7 +27,6 @@ public class SearchPostsNGO extends HttpServlet {
 	 */
 	public SearchPostsNGO() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
