@@ -23,19 +23,16 @@ public class ConfirmPickUp extends HttpServlet {
     }
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String itemId = request.getParameter("item_id");
+		String itemId = request.getParameter("itemId");
+		String ngoId = request.getParameter("pickUpNGOId");
 		
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		
-		Map<String, Object>  hit = connection.queryItemByItemId(itemId);
-		if (hit == null || !hit.containsKey("item_id")) {
+		Map<String, Object> hit = connection.markItemComplete(itemId, ngoId);
+		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;
 		}
-		
-		Item item = (Item) hit.get("item_id");
-		item.builder().status(Status.COLLECTED).build();
-		connection.addItem(item);
 		response.setStatus(204);
 	}
 
