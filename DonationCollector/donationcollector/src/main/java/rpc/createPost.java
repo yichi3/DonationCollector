@@ -47,7 +47,6 @@ public class createPost extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Add authentication step?
 
 		if (ServletFileUpload.isMultipartContent(request)) {
 			// Read data from stream
@@ -64,6 +63,7 @@ public class createPost extends HttpServlet {
 			// Initialize item info array and list of images uploaded
 			JSONArray itemInfo = new JSONArray();
 			List<FileItem> itemImages = new ArrayList<>();
+			
 			for (Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 				final FileItem item = (FileItem) it.next();
 
