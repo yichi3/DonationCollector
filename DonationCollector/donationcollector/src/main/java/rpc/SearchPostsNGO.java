@@ -38,16 +38,13 @@ public class SearchPostsNGO extends HttpServlet {
     	double lat = Double.parseDouble(request.getParameter("lat"));
 		double lng = Double.parseDouble(request.getParameter("lon")); 
 		ElasticSearchConnection connection = new ElasticSearchConnection();
+		connection.elasticSearchConnection();
+		
 		ArrayList<Map<String, Object>> hits = connection.queryItemByLocation(lat, lng, distance);
         for (Map<String, Object> hit : hits) {
-        	// need to parse map
+        	
         }
-        // original code: 
-        //JSONArray array = new JSONArray();
-        // for (SearchHit hit : hits) {
-        //	array.put(hit.getSourceAsString());
-        //}
-        //RpcHelper.writeJsonArray(response, array);
+      
         		
     }
 }
