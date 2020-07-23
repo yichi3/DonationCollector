@@ -2,6 +2,7 @@ package db;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import entity.Category;
@@ -12,13 +13,27 @@ import entity.UserType;
 
 public class Runner {
 	public static void main(String[] args) {
-		testPickup();
+		queryItemId();
+
 	}
 
 	public static void testPickup() {
 		ElasticSearchConnection es = new ElasticSearchConnection();
 		es.elasticSearchConnection();
 		es.updateItemPickUpInfo("b2c7d235-9e43-4ea0-84ce-d74b34734de7", "2222", "red Cross", "2020-07-10");
+		try {
+			es.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static void queryItemId() {
+		ElasticSearchConnection es = new ElasticSearchConnection();
+		es.elasticSearchConnection();
+		Map<String, Object> res = es.queryItemByItemId("fd949ac8-0d5a-4168-8799-863f1624f6de");
+		System.out.print(res);
 		try {
 			es.close();
 		} catch (Exception e) {
