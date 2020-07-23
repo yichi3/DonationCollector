@@ -23,13 +23,18 @@ public class ConfirmPickUp extends HttpServlet {
 	
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String itemId = request.getParameter("itemId");
-		String ngoId = request.getParameter("pickUpNGOId");
+		String ngoId = request.getParameter("ngoId");
 		
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		connection.elasticSearchConnection();
 		
 		Map<String, Object> hit = connection.markItemComplete(itemId, ngoId);
-		System.out.println(hit);
+		// System.out.println(hit);
+		try {
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;

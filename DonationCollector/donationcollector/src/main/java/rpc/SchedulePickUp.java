@@ -44,9 +44,9 @@ public class SchedulePickUp extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String itemId = request.getParameter("itemId");
-		String ngoId = request.getParameter("pickUpNGOId");
-		String pickUpNGOName = request.getParameter("pickUpNGOName");
-		String availablePickUpTime = request.getParameter("availablePickUpTime");
+		String ngoId = request.getParameter("ngoId");
+		String pickUpNGOName = request.getParameter("ngoName");
+		String availablePickUpTime = request.getParameter("pickUpDate");
 		
 
 		ElasticSearchConnection connection = new ElasticSearchConnection();
