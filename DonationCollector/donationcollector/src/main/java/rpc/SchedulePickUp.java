@@ -45,14 +45,18 @@ public class SchedulePickUp extends HttpServlet {
 			throws ServletException, IOException {
 		String itemId = request.getParameter("itemId");
 		String ngoId = request.getParameter("pickUpNGOId");
+		String pickUpNGOName = request.getParameter("pickUpNGOName");
 		String availablePickUpTime = request.getParameter("availablePickUpTime");
-		
 		
 
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		connection.elasticSearchConnection();
-
-		Map<String, Object> hit = connection.updateItemPickUpInfo(itemId, ngoId, availablePickUpTime);
+		Map<String, Object> hit = connection.updateItemPickUpInfo(itemId, ngoId, pickUpNGOName, availablePickUpTime);
+		try {
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;

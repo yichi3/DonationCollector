@@ -12,7 +12,7 @@ import entity.UserType;
 
 public class Runner {
 	public static void main(String[] args) {
-		testPickup();
+		uploadItem();
 	}
 
 	public static void testPickup() {
@@ -22,7 +22,6 @@ public class Runner {
 		try {
 			es.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -93,7 +92,6 @@ public class Runner {
 		try {
 			es.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 //

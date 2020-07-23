@@ -30,7 +30,6 @@ public class createPost extends HttpServlet {
      */
     public createPost() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
 	/**
@@ -50,7 +49,8 @@ public class createPost extends HttpServlet {
 			JSONObject userObj = itemObj.getJSONObject("posterUser");
 			User posterUser = User.builder()
 					.userId(userObj.getString("user_id"))
-					.name(userObj.getString("name"))
+					.firstName("firstName")
+					.lastName("lastName")
 					.userType(UserType.valueOf(userObj.getString("UserType")))
 					.email(userObj.getString("email"))
 					.address(userObj.getString("address")).build();
@@ -59,7 +59,7 @@ public class createPost extends HttpServlet {
 			JSONObject NGOObj = itemObj.getJSONObject("NGOUser");
 			User NGOUser = User.builder()
 					.userId(NGOObj.getString("user_id"))
-					.name(NGOObj.getString("name"))
+					.ngoName(NGOObj.getString("ngoName"))
 					.userType(UserType.valueOf(NGOObj.getString("UserType")))
 					.email(NGOObj.getString("email"))
 					.address(NGOObj.getString("address")).build();
