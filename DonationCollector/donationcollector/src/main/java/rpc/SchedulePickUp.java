@@ -1,6 +1,7 @@
 package rpc;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -42,20 +43,24 @@ public class SchedulePickUp extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String itemId = request.getParameter("item_id");
+		String itemId = request.getParameter("itemId");
+		String ngoId = request.getParameter("ngoId");
+		String pickUpNGOName = request.getParameter("ngoName");
+		String availablePickUpTime = request.getParameter("pickUpDate");
+		
 
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		connection.elasticSearchConnection();
-
-		Map<String, Object> hit = connection.queryItemByItemId(itemId);
-		if (hit == null || !hit.containsKey("item_id")) {
+		Map<String, Object> hit = connection.updateItemPickUpInfo(itemId, ngoId, pickUpNGOName, availablePickUpTime);
+		try {
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;
 		}
-
-		Item item = (Item) hit.get("item_id");
-		item.builder().status(Status.SCHEDULED).build();
-		connection.addItem(item);
 		response.setStatus(204);
 	}
 
