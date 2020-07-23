@@ -29,18 +29,22 @@ public class ConfirmPickUp extends HttpServlet {
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String itemId = request.getParameter("itemId");
+		String ngoId = request.getParameter("ngoId");
 		
 		ElasticSearchConnection connection = new ElasticSearchConnection();
+		connection.elasticSearchConnection();
 		
-		Map<String, Object>  hit = connection.queryItemByItemId(itemId);
-		if (hit == null || !hit.containsKey("itemId")) {
+		Map<String, Object> hit = connection.markItemComplete(itemId, ngoId);
+		// System.out.println(hit);
+		try {
+			connection.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;
 		}
-		
-		Item item = (Item) hit.get("itemId");
-		Item.builder().status(Status.COLLECTED).build();
-		connection.addItem(item);
 		response.setStatus(204);
 	}
 
