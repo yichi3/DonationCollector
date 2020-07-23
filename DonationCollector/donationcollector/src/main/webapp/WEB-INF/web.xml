@@ -40,7 +40,14 @@
   	<servlet-class>rpc.userPosts</servlet-class>
   </servlet>
 
-  <servlet-mapping>
+<servlet>
+  	<servlet-name>SchedulePickUp</servlet-name>
+  	<display-name>SchedulePickUp</display-name>
+  	<description>NGO schedules PickUp</description>
+  	<servlet-class>rpc.SchedulePickUp</servlet-class>
+  </servlet>
+
+ <servlet-mapping>
   	<servlet-name>createPost</servlet-name>
   	<url-pattern>/createPost</url-pattern>
   </servlet-mapping>
@@ -63,6 +70,11 @@
 <servlet-mapping>
   	<servlet-name>userPosts</servlet-name>
   	<url-pattern>/userPosts</url-pattern>
+  </servlet-mapping>
+
+<servlet-mapping>
+  	<servlet-name>SchedulePickUp</servlet-name>
+  	<url-pattern>/schedulePickUp</url-pattern>
   </servlet-mapping>
 
 </web-app>
