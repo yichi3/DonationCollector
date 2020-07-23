@@ -18,54 +18,7 @@ public class ElasticSearchIndexCreation {
 	// to-do: should rename to index
 
 	public static void main(String[] args) {
-		usersIndex();
 		itemsIndex();
-	}
-
-	private static void usersIndex() {
-		RestHighLevelClient client = new RestHighLevelClient(RestClient.builder(new HttpHost(
-				ElasticSearchDBUtil.INSTANCE, ElasticSearchDBUtil.PORT_NUM, ElasticSearchDBUtil.CONNECTION_TYPE)));
-
-		// Check if userDocument exist
-		checkIndexExists("users", client);
-		// Create user table index
-
-		CreateIndexRequest usersDocumentRequest = new CreateIndexRequest("users");
-		Map<String, Object> userDocumentProperties = new HashMap<>();
-
-		// UserId field
-		Map<String, Object> userId = new HashMap<>();
-		userId.put("type", "text");
-		userDocumentProperties.put("userId", userId);
-		// userType
-		Map<String, Object> userType = new HashMap<>();
-		userType.put("type", "text");
-		userDocumentProperties.put("userType", userType);
-		// userName
-		Map<String, Object> userName = new HashMap<>();
-		userName.put("type", "text");
-		userDocumentProperties.put("userName", userName);
-		// userEmail
-		Map<String, Object> userEmail = new HashMap<>();
-		userEmail.put("type", "text");
-		userDocumentProperties.put("userEmail", userEmail);
-		// userAddress
-		Map<String, Object> userAddress = new HashMap<>();
-		userAddress.put("type", "text");
-		userDocumentProperties.put("userAddress", userAddress);
-
-		Map<String, Object> usersMapping = new HashMap<>();
-		usersMapping.put("properties", userDocumentProperties);
-
-		usersDocumentRequest.mapping(usersMapping);
-
-		try {
-			CreateIndexResponse createUserDocumentResponse = client.indices().create(usersDocumentRequest,
-					RequestOptions.DEFAULT);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private static void itemsIndex() {
@@ -95,10 +48,22 @@ public class ElasticSearchIndexCreation {
 		Map<String, Object> locationAddress = new HashMap<>();
 		locationAddress.put("type", "text");
 		itemsDocumentProperties.put("locationAddress", locationAddress);
+		// itemName field
+		Map<String, Object> itemName = new HashMap<>();
+		itemName.put("type", "text");
+		itemsDocumentProperties.put("itemName", itemName);
 		// posterId
 		Map<String, Object> posterId = new HashMap<>();
 		posterId.put("type", "text");
 		itemsDocumentProperties.put("posterId", posterId);
+		// posterFirstName
+		Map<String, Object> posterFirstName = new HashMap<>();
+		posterFirstName.put("type", "text");
+		itemsDocumentProperties.put("posterFirstName", posterFirstName);
+		// posterLastName
+		Map<String, Object> posterLastName = new HashMap<>();
+		posterLastName.put("type", "text");
+		itemsDocumentProperties.put("posterLastName", posterLastName);
 		// category
 		Map<String, Object> category = new HashMap<>();
 		category.put("type", "text");
@@ -124,6 +89,10 @@ public class ElasticSearchIndexCreation {
 		Map<String, Object> pickUpNGOId = new HashMap<>();
 		pickUpNGOId.put("type", "text");
 		itemsDocumentProperties.put("pickUpNGOId", pickUpNGOId);
+		// pickUpNGOName
+		Map<String, Object> pickUpNGOName = new HashMap<>();
+		pickUpNGOName.put("type", "text");
+		itemsDocumentProperties.put("pickUpNGOName", pickUpNGOName);
 		// selectedPickUpTime
 		Map<String, Object> selectedPickUpTime = new HashMap<>();
 		selectedPickUpTime.put("type", "date");

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -17,13 +18,19 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.maps.errors.ApiException;
+
 import entity.Category;
+import entity.GeoLocation;
 import entity.Item;
 import entity.Status;
 import entity.User;
 import entity.UserType;
+import util.GeoCoding;
+import db.ElasticSearchConnection;
 import db.GCSConnection;
 
 /**
@@ -55,8 +62,9 @@ public class createPost extends HttpServlet {
 			try {
 				items = uploadHandler.parseRequest(request);
 			} catch (FileUploadException e) {
-				// TODO Auto-generated catch block
+				response.sendError(400, "Invalid request type");
 				e.printStackTrace();
+				return;
 			}
 
 			// Initialize item info array and list of images uploaded
@@ -81,43 +89,51 @@ public class createPost extends HttpServlet {
 			// Do we need to keep a log of items that are failed to be uploaded
 			for (int i = 0; i < itemInfo.length(); i++) {
 				JSONObject itemObj = itemInfo.getJSONObject(i);
+				
 				// Extract poster user
 				JSONObject userObj = itemObj.getJSONObject("posterUser");
-				User posterUser = User.builder().userId(userObj.getString("userId")).name(userObj.getString("name"))
+				User posterUser = User.builder().userId(userObj.getString("userId")).firstName(userObj.getString("firstName"))
+						.lastName(userObj.getString("lastName"))
 						.userType(UserType.valueOf(userObj.getString("userType"))).email(userObj.getString("email"))
 						.address(userObj.getString("address")).build();
 
-				// Extract NGO user
-				JSONObject NGOObj = itemObj.getJSONObject("NGOUser");
-				User NGOUser = User.builder().userId(NGOObj.getString("userId")).name(NGOObj.getString("name"))
-						.userType(UserType.valueOf(NGOObj.getString("userType"))).email(NGOObj.getString("email"))
-						.address(NGOObj.getString("address")).build();
-
-				// Upload image to GCS and get urlToImage
-				// FileItem image = itemImages.get(i);
 				// Generate item UUID
 				UUID itemId = UUID.randomUUID();
 
 				// Save to GCS
 				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);
 
-				Item item = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage(urlToImage).itemId(itemId)
+				// Get lat and lon
+				GeoCoding geo = new GeoCoding();
+				GeoLocation loc = new GeoLocation(-1, -1);
+				try {
+					loc = geo.parseAddress(itemObj.getString("location"));
+				} catch (Exception e) {
+					response.sendError(500, "Failed to parse address");
+					e.printStackTrace();
+					return;
+				}
+				
+				Item item = Item.builder().posterUser(posterUser).urlToImage(urlToImage).itemId(itemId)
 						.itemName(itemObj.getString("itemName")).description(itemObj.getString("description"))
 						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
-						.location(itemObj.getString("location")).lat(Double.parseDouble(itemObj.getString("lat")))
-						.lon(Double.parseDouble(itemObj.getString("lon")))
+						.location(itemObj.getString("location")).lat(loc.getLat()).lon(loc.getLng())
 						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(itemObj.getString("pickUpDate"))
 						.build();
 
-				// Save Item to ES
-				// Boolean response = saveToES(item.toJSONObject);
-				// Log if failed to upload this item
-				response.setContentType("application/json");
-				response.getWriter().print(item.toJSONObject());
-				response.getWriter().write("You have successfully uploaded all items");
+				// Save item to ES
+				ElasticSearchConnection esClient = new ElasticSearchConnection();
+				esClient.elasticSearchConnection();
+				Map<String, Object> esResponse = esClient.addItem(item);
+				
+				if (esResponse.size() == 0) {
+					response.sendError(503, "Failed to upload item info to elastic search");
+					return;
+				}
 			}
 		}
-
+		response.getWriter().write("You have successfully uploaded all items");
+		response.setStatus(200);
 	}
 }

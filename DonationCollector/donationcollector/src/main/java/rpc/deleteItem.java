@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+
 import db.ElasticSearchConnection;
 
 /**
@@ -31,7 +32,7 @@ public class deleteItem extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 
-// 		endpoint: /deleteitem
+		System.out.println("in the method");
 //		1. get request userId
 
 		if (request.getParameter("userId") == null) {
@@ -46,17 +47,23 @@ public class deleteItem extends HttpServlet {
 		}
 
 		String userId = request.getParameter("userId");
-		String itemId = request.getParameter("itemId");
+		System.out.println("got userId");
 
+		String itemId = request.getParameter("itemId");
+		System.out.println("got itemId");
 
 //		2. query on ES
 
 		ElasticSearchConnection es = new ElasticSearchConnection();
 		es.elasticSearchConnection();
 
-// 3. convert db response
+//		 3. convert db response
 		try {
+
 			Map<String, Object> dbResponse = es.deleteItem(itemId);
+			System.out.println("got db response");
+			
+			es.close();
 
 			if (dbResponse.size() == 0) {
 				response.getWriter().write("The item doesn't exist");
@@ -64,19 +71,23 @@ public class deleteItem extends HttpServlet {
 				return;
 			}
 
+
 //			3. check whether the item belongs to the user
 
 			String posterId = (String) dbResponse.get("posterId");
-			
+			System.out.println("converted posterId: " + posterId);
+
 			if (!posterId.equals(userId)) {
 				response.getWriter().write("The item doesn't belong to the user");
 				response.setStatus(401);
 				return;
-			}			
+			}
+
+			System.out.println("The item belongs to the user");
 
 //			4. check item status
-
-			String status = (String) dbResponse.get("itemStatus");		
+			String status = (String) dbResponse.get("itemStatus");
+			System.out.println("converted status: " + status);
 
 			if (status.equals("SCHEDULED")) {
 				response.getWriter().write("The item has been scheduled and can not be deleted.");

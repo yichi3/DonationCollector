@@ -53,4 +53,12 @@ public class RpcHelper {
 		}
 		return list;
 	}
+	
+	public static List<String> parseLocation(String locationLatLon) {
+		List<String> result = new ArrayList<>();
+		int comma = locationLatLon.indexOf(",");
+		result.add(locationLatLon.substring(0, comma));
+		result.add(locationLatLon.substring(comma + 2));
+		return result;
+	}
 }

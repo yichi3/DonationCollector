@@ -27,18 +27,18 @@ public class ConfirmPickUp extends HttpServlet {
         // TODO Auto-generated constructor stub
     }
 	
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String itemId = request.getParameter("item_id");
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String itemId = request.getParameter("itemId");
 		
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		
 		Map<String, Object>  hit = connection.queryItemByItemId(itemId);
-		if (hit == null || !hit.containsKey("item_id")) {
+		if (hit == null || !hit.containsKey("itemId")) {
 			response.sendError(404, "cannot find this item");
 			return;
 		}
 		
-		Item item = (Item) hit.get("item_id");
+		Item item = (Item) hit.get("itemId");
 		Item.builder().status(Status.COLLECTED).build();
 		connection.addItem(item);
 		response.setStatus(204);
