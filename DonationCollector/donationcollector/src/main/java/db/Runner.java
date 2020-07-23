@@ -12,7 +12,7 @@ import entity.UserType;
 
 public class Runner {
 	public static void main(String[] args) {
-		testPickup();
+		uploadItem();
 	}
 
 	public static void testPickup() {
@@ -22,7 +22,6 @@ public class Runner {
 		try {
 			es.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -83,10 +82,16 @@ public class Runner {
 				.status(Status.SCHEDULED).pickUpDate("2020-06-10").NGOUser(NGOUser).build();
 		// Then call the ES client's addItem method to upload to ES
 		es.addItem(item4);
+		
+		Item item5 = Item.builder().posterUser(posterUser).NGOUser(NGOUser).urlToImage("acb@google.cloud.com")
+				.itemId(itemId).description("A desk").category(Category.FURNITURE).size("2x2x2").schedule(schedule)
+				.location("125 S Frances St, Sunnyvale, CA 94086").lat(37.377628).lon(-122.031052)
+				.status(Status.PENDING).pickUpDate("2020-06-10").build();
+		es.addItem(item5);
+		// Then call the ES client's addItem method to upload to ES
 		try {
 			es.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 //

@@ -10,8 +10,38 @@
   	<description></description>
   	<servlet-class>rpc.createPost</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>SearchPostsNGO</servlet-name>
+  	<display-name>SearchPostsNGO</display-name>
+  	<description></description>
+  	<servlet-class>rpc.SearchPostsNGO</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>SchedulePickUp</servlet-name>
+  	<display-name>SchedulePickUp</display-name>
+  	<description></description>
+  	<servlet-class>rpc.SchedulePickUp</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>ConfirmPickUp</servlet-name>
+  	<display-name>ConfirmPickUp</display-name>
+  	<description></description>
+  	<servlet-class>rpc.ConfirmPickUp</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>createPost</servlet-name>
   	<url-pattern>/createPost</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>SearchPostsNGO</servlet-name>
+  	<url-pattern>/SearchPostsNGO</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>SchedulePickUp</servlet-name>
+  	<url-pattern>/SchedulePickUp</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>ConfirmPickUp</servlet-name>
+  	<url-pattern>/ConfirmPickUp</url-pattern>
   </servlet-mapping>
 </web-app>

@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
+
 import com.google.maps.errors.ApiException;
 
 import db.ElasticSearchConnection;
@@ -30,6 +31,7 @@ public class SearchPostsNGO extends HttpServlet {
 	 */
 	public SearchPostsNGO() {
 		super();
+
 		// TODO Auto-generated constructor stub
 	}
 
