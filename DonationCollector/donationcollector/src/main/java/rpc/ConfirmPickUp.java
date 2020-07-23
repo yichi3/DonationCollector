@@ -14,6 +14,11 @@ import entity.Status;
 public class ConfirmPickUp extends HttpServlet {
 	
 	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3257472465914153725L;
+
+	/**
 	 * Servlet implementation class ComfirmPickUp
 	 */
 	
@@ -34,7 +39,7 @@ public class ConfirmPickUp extends HttpServlet {
 		}
 		
 		Item item = (Item) hit.get("item_id");
-		item.builder().status(Status.COLLECTED).build();
+		Item.builder().status(Status.COLLECTED).build();
 		connection.addItem(item);
 		response.setStatus(204);
 	}
