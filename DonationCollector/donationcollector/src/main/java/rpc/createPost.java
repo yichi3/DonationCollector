@@ -114,18 +114,33 @@ public class createPost extends HttpServlet {
 					return;
 				}
 				
-				Item item = Item.builder().posterUser(posterUser).NGOUser(User.builder().build()).urlToImage(urlToImage).itemId(itemId)
-						.itemName(itemObj.getString("itemName")).description(itemObj.getString("description"))
-						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
+				Item item = Item.builder()
+						.posterUser(posterUser)
+						.NGOUser(User.builder().userType(UserType.NGO).build())
+						.urlToImage(urlToImage)
+						.itemId(itemId)
+						.itemName(itemObj.getString("itemName"))
+						.description(itemObj.getString("description"))
+						.category(Category.valueOf(itemObj.getString("category")))
+						.size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
-						.location(itemObj.getString("location")).lat(loc.getLat()).lon(loc.getLng())
-						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(new String())
+						.location(itemObj.getString("location"))
+						.lat(loc.getLat())
+						.lon(loc.getLng())
+						.status(Status.valueOf(itemObj.getString("status")))
+						.pickUpDate(new String())
 						.build();
 
 				// Save item to ES
 				ElasticSearchConnection esClient = new ElasticSearchConnection();
 				esClient.elasticSearchConnection();
 				Map<String, Object> esResponse = esClient.addItem(item);
+				
+				try {
+					esClient.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				
 				if (esResponse.size() == 0) {
 					response.sendError(503, "Failed to upload item info to elastic search");
