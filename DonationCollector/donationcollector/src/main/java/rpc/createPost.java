@@ -114,12 +114,12 @@ public class createPost extends HttpServlet {
 					return;
 				}
 				
-				Item item = Item.builder().posterUser(posterUser).urlToImage(urlToImage).itemId(itemId)
+				Item item = Item.builder().posterUser(posterUser).NGOUser(User.builder().build()).urlToImage(urlToImage).itemId(itemId)
 						.itemName(itemObj.getString("itemName")).description(itemObj.getString("description"))
 						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
 						.location(itemObj.getString("location")).lat(loc.getLat()).lon(loc.getLng())
-						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(itemObj.getString("pickUpDate"))
+						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(new String())
 						.build();
 
 				// Save item to ES
