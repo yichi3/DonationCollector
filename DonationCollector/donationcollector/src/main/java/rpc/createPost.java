@@ -18,10 +18,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.google.maps.errors.ApiException;
 
 import entity.Category;
 import entity.GeoLocation;
@@ -70,7 +67,7 @@ public class createPost extends HttpServlet {
 			// Initialize item info array and list of images uploaded
 			JSONArray itemInfo = new JSONArray();
 			List<FileItem> itemImages = new ArrayList<>();
-			
+
 			for (Iterator<FileItem> it = items.iterator(); it.hasNext();) {
 				final FileItem item = (FileItem) it.next();
 
@@ -89,11 +86,11 @@ public class createPost extends HttpServlet {
 			// Do we need to keep a log of items that are failed to be uploaded
 			for (int i = 0; i < itemInfo.length(); i++) {
 				JSONObject itemObj = itemInfo.getJSONObject(i);
-				
+
 				// Extract poster user
 				JSONObject userObj = itemObj.getJSONObject("posterUser");
-				User posterUser = User.builder().userId(userObj.getString("userId")).firstName(userObj.getString("firstName"))
-						.lastName(userObj.getString("lastName"))
+				User posterUser = User.builder().userId(userObj.getString("userId"))
+						.firstName(userObj.getString("firstName")).lastName(userObj.getString("lastName"))
 						.userType(UserType.valueOf(userObj.getString("userType"))).email(userObj.getString("email"))
 						.address(userObj.getString("address")).build();
 
@@ -104,6 +101,7 @@ public class createPost extends HttpServlet {
 				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);
 
 				// Get lat and lon
+
 				GeoCoding geo = new GeoCoding();
 				GeoLocation loc = new GeoLocation(-1, -1);
 				try {
@@ -113,42 +111,36 @@ public class createPost extends HttpServlet {
 					e.printStackTrace();
 					return;
 				}
-				
-				Item item = Item.builder()
-						.posterUser(posterUser)
-						.NGOUser(User.builder().userType(UserType.NGO).build())
-						.urlToImage(urlToImage)
-						.itemId(itemId)
-						.itemName(itemObj.getString("itemName"))
+
+				Item item = Item.builder().posterUser(posterUser).NGOUser(User.builder().userType(UserType.NGO).build())
+						.urlToImage(urlToImage).itemId(itemId).itemName(itemObj.getString("itemName"))
 						.description(itemObj.getString("description"))
-						.category(Category.valueOf(itemObj.getString("category")))
-						.size(itemObj.getString("size"))
+						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
-						.location(itemObj.getString("location"))
-						.lat(loc.getLat())
-						.lon(loc.getLng())
-						.status(Status.valueOf(itemObj.getString("status")))
-						.pickUpDate(new String())
-						.build();
+						.location(itemObj.getString("location")).lat(loc.getLat()).lon(loc.getLng())
+						.status(Status.valueOf(itemObj.getString("status"))).pickUpDate(new String()).build();
 
 				// Save item to ES
 				ElasticSearchConnection esClient = new ElasticSearchConnection();
 				esClient.elasticSearchConnection();
 				Map<String, Object> esResponse = esClient.addItem(item);
-				
+
 				try {
 					esClient.close();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				if (esResponse.size() == 0) {
-					response.sendError(503, "Failed to upload item info to elastic search");
-					return;
+					//response.sendError(503, "Failed to upload item info to elastic search");
+					//return;
 				}
+				
+				response.setContentType("application/json");
+				response.getWriter().print(item.toJSONObject());
 			}
+			response.getWriter().write("You have successfully uploaded all items");
+			response.setStatus(200);
 		}
-		response.getWriter().write("You have successfully uploaded all items");
-		response.setStatus(200);
 	}
 }
