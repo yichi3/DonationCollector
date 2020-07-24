@@ -32,7 +32,6 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONObject;
 
 import entity.Item;
-import entity.User;
 
 public class ElasticSearchConnection {
 	private RestHighLevelClient client;
