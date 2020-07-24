@@ -114,7 +114,7 @@ public class createPost extends HttpServlet {
 					return;
 				}
 				
-				Item item = Item.builder().posterUser(posterUser).NGOUser(User.builder().build()).urlToImage(urlToImage).itemId(itemId)
+				Item item = Item.builder().posterUser(posterUser).NGOUser(User.builder().userType(UserType.NGO).build()).urlToImage(urlToImage).itemId(itemId)
 						.itemName(itemObj.getString("itemName")).description(itemObj.getString("description"))
 						.category(Category.valueOf(itemObj.getString("category"))).size(itemObj.getString("size"))
 						.schedule(RpcHelper.JSONArrayToList(itemObj.getJSONArray("schedule")))
@@ -126,7 +126,12 @@ public class createPost extends HttpServlet {
 				ElasticSearchConnection esClient = new ElasticSearchConnection();
 				esClient.elasticSearchConnection();
 				Map<String, Object> esResponse = esClient.addItem(item);
-				
+				try {
+					esClient.close();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				if (esResponse.size() == 0) {
 					response.sendError(503, "Failed to upload item info to elastic search");
 					return;
