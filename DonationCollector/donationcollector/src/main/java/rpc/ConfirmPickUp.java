@@ -24,7 +24,6 @@ public class ConfirmPickUp extends HttpServlet {
 	
 	public ConfirmPickUp() {
         super();
-        // TODO Auto-generated constructor stub
     }
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

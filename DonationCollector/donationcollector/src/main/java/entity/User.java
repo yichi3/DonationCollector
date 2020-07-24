@@ -15,7 +15,7 @@ public class User {
 	private UserType userType;
 	private String email;
 	private String address;
-	
+
 	public JSONObject toJSONObject() {
 		JSONObject obj = new JSONObject();
 		obj.put("userId", userId);

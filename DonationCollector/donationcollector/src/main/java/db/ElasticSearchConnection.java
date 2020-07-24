@@ -32,6 +32,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONObject;
 
 import entity.Item;
+import entity.Status;
 import entity.User;
 
 public class ElasticSearchConnection {
@@ -222,23 +223,25 @@ public class ElasticSearchConnection {
 		StringBuilder queryString = new StringBuilder();
 		queryString.append("if (ctx._source.itemId == ");
 		queryString.append("'" + itemId + "'");
-		queryString.append("&& ctx._source.itemStatus == 'PENDING') { " + "ctx._source.pickUpNGOId = ");
+		queryString.append(" && ctx._source.itemStatus == 'PENDING') { " + "ctx._source.pickUpNGOId = ");
 		queryString.append("'" + NGOId + "';");
 		queryString.append("ctx._source.pickUpNGOName = ");
 		queryString.append("'" + pickUpNGOName + "';");
 		queryString.append("ctx._source.pickUpTime = ");
 		queryString.append("'" + pickUpTime + "';");
 		queryString.append("ctx._source.itemStatus = 'SCHEDULED';}");
-
-		request.setScript(new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap()));
+		Script script = new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap());
+		
+		request.setScript(script);
 
 		try {
-			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
-			System.out.print(bulkResponse);
+			client.updateByQuery(request, RequestOptions.DEFAULT);
+			//System.out.println(bulkResponse);
+
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
+			System.out.println(queryResult);
 			return queryResult;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			// Given error, return empty map
 			return new HashMap<String, Object>();
@@ -298,7 +301,7 @@ public class ElasticSearchConnection {
 
 	public void close() throws Exception {
 		try {
-			System.out.print("Closing elasticSearch  client");
+			System.out.println("Closing elasticSearch  client");
 			if (client != null) {
 				client.close();
 			}
