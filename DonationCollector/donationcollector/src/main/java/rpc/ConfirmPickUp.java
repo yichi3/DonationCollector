@@ -34,7 +34,8 @@ public class ConfirmPickUp extends HttpServlet {
 		connection.elasticSearchConnection();
 		
 		Map<String, Object> hit = connection.markItemComplete(itemId, ngoId);
-		// System.out.println(hit);
+		System.out.println("111");
+		System.out.println(hit);
 		try {
 			connection.close();
 		} catch (Exception e) {
