@@ -76,9 +76,10 @@ public class ElasticSearchConnection {
 				builder.field("description", itemObj.getString("description"));
 				builder.field("availablePickUpTime", itemObj.getJSONArray("schedule"));
 				builder.field("itemStatus", itemObj.getString("status"));
-//				builder.field("pickUpNGOId", ngoId);
-//				builder.field("pickUpNGOName", ngoName);
-//				builder.field("pickUpTime", itemObj.getString("pickUpDate"));
+				builder.field("pickUpNGOId", "");
+				builder.field("pickUpNGOName", "");
+				// Placeholder pickup time
+				builder.field("pickUpTime", "1999-01-01");
 				// to-fix hard-coded for now
 				builder.timeField("postDate", "2020-06-30");
 			}
@@ -240,7 +241,14 @@ public class ElasticSearchConnection {
 		try {
 			client.updateByQuery(request, RequestOptions.DEFAULT);
 			// System.out.println(bulkResponse);
-
+			try {
+				System.out.println("entering wait");
+				Thread.sleep(1200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("entering exception");
+				e1.printStackTrace();
+			}
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			System.out.println(queryResult);
 			return queryResult;
@@ -265,7 +273,15 @@ public class ElasticSearchConnection {
 
 		try {
 			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
-			System.out.print(bulkResponse);
+			System.out.println(bulkResponse);
+			try {
+				System.out.println("entering wait");
+				Thread.sleep(1200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("entering exception");
+				e1.printStackTrace();
+			}
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			return queryResult;
 		} catch (IOException e) {
@@ -292,6 +308,14 @@ public class ElasticSearchConnection {
 		try {
 			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
 			System.out.print(bulkResponse);
+			try {
+				System.out.println("entering wait");
+				Thread.sleep(1200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("entering exception");
+				e1.printStackTrace();
+			}
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			return queryResult;
 		} catch (IOException e) {

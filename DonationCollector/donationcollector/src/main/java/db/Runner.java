@@ -13,7 +13,36 @@ import entity.UserType;
 
 public class Runner {
 	public static void main(String[] args) throws Exception {
-		uploadItem();
+		// uploadItem();
+		getPost();
+	}
+
+	public static void testDelete() {
+		ElasticSearchConnection es = new ElasticSearchConnection();
+		es.elasticSearchConnection();
+		Map<String, Object> res = es.deleteItem("bcbc85cd-7b27-400e-a0d8-c829ad486b27");
+		System.out.println(res.toString());
+		try {
+			es.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// uploadItem();
+	}
+
+	public static void getPost() {
+		ElasticSearchConnection es = new ElasticSearchConnection();
+		es.elasticSearchConnection();
+		List<Map<String, Object>> res = es.queryItemByPosterId("456");
+		System.out.println(res.toString());
+		try {
+			es.close();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// uploadItem();
 	}
 
 	public static void testPickup() {
@@ -62,12 +91,13 @@ public class Runner {
 		List<String> schedule = Arrays.asList("2020-06-30", "2020-07-10");
 		// Create new user ID
 		UUID itemId = UUID.randomUUID();
+		System.out.println(itemId);
 
 		// Create test item
 		Item item = Item.builder().posterUser(posterUser).urlToImage("acb@google.cloud.com").itemId(itemId)
 				.description("A t-shirt").category(Category.APPAREL).size("2x2x2").schedule(schedule)
 				.location("2464 W El Camino Real C, Mountain View, CA 94040").lat(37.399180).lon(-122.108690)
-				.status(Status.PENDING).pickUpDate("2020-06-10").NGOUser(NGOUser).build();
+				.status(Status.PENDING).pickUpDate("2020-06-10").itemName("a cap").NGOUser(NGOUser).build();
 		// Then call the ES client's addItem method to upload to ES
 		es.addItem(item);
 
