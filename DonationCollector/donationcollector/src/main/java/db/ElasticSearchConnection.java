@@ -32,8 +32,6 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONObject;
 
 import entity.Item;
-import entity.Status;
-import entity.User;
 
 public class ElasticSearchConnection {
 	private RestHighLevelClient client;
@@ -44,7 +42,7 @@ public class ElasticSearchConnection {
 	}
 
 	// Please change return type according to how you want status code to show up.
-	public Map<String, Object> addItem(Item item) {
+	public Map<String, String> addItem(Item item) {
 
 		JSONObject itemObj = item.toJSONObject();
 		JSONObject posterObj = itemObj.getJSONObject("posterUser");
@@ -87,19 +85,24 @@ public class ElasticSearchConnection {
 			builder.endObject();
 			IndexRequest indexRequest = new IndexRequest("items").id(itemObj.getString("itemId")).source(builder);
 			IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
-			Map<String, Object> queryResult = queryItemByItemId(itemObj.getString("itemId"));
 
-			return queryResult;
+			System.out.println("get results => " + response.getResult());
+			Map<String, String> statusCode = new HashMap();
+			if (response.getResult().toString() == "CREATED") {
+				statusCode.put("statusCode", "200");
+			} else {
+				statusCode.put("statusCode", "503");
+			}
+			return statusCode;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return new HashMap<String, Object>();
+			Map<String, String> statusCode = new HashMap();
+			statusCode.put("statusCode", "503");
+			return statusCode;
 		}
 
 	}
-	// helpful search API reference:
-	// https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high-search.html
 
-	// placeholder
 	public ArrayList<Map<String, Object>> queryItemByLocation(double lat, double lng, double distance)
 			throws IOException {
 
@@ -231,12 +234,12 @@ public class ElasticSearchConnection {
 		queryString.append("'" + pickUpTime + "';");
 		queryString.append("ctx._source.itemStatus = 'SCHEDULED';}");
 		Script script = new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap());
-		
+
 		request.setScript(script);
 
 		try {
 			client.updateByQuery(request, RequestOptions.DEFAULT);
-			//System.out.println(bulkResponse);
+			// System.out.println(bulkResponse);
 
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			System.out.println(queryResult);
