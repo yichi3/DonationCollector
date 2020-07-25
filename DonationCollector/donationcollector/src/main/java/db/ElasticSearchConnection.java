@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.index.IndexRequest;
@@ -76,9 +77,9 @@ public class ElasticSearchConnection {
 				builder.field("description", itemObj.getString("description"));
 				builder.field("availablePickUpTime", itemObj.getJSONArray("schedule"));
 				builder.field("itemStatus", itemObj.getString("status"));
-//				builder.field("pickUpNGOId", ngoId);
-//				builder.field("pickUpNGOName", ngoName);
-//				builder.field("pickUpTime", itemObj.getString("pickUpDate"));
+				builder.field("pickUpNGOId", new String());
+				builder.field("pickUpNGOName", new String());
+				builder.field("pickUpTime", itemObj.getString("pickUpDate"));
 				// to-fix hard-coded for now
 				builder.timeField("postDate", "2020-06-30");
 			}
@@ -266,12 +267,17 @@ public class ElasticSearchConnection {
 		try {
 			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
 			System.out.print(bulkResponse);
+			TimeUnit.SECONDS.wait(1);
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			return queryResult;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			// Given error, return empty map
+			return new HashMap<String, Object>();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 			return new HashMap<String, Object>();
 		}
 	}

@@ -97,11 +97,10 @@ public class userPosts extends HttpServlet {
 				item.put("NGOUser", NGOUser);
 
 				item.put("pickUpDate", post.get("pickUpTime"));
-				item.put("postDate", post.get("postDate"));
-				item.put("schedule", new JSONArray(post.get("availablePickUpTime")).toString());
+//				item.put("postDate", post.get("postDate"));
+				item.put("schedule", new JSONArray(post.get("availablePickUpTime").toString()));
 
 				items.put(item);
-
 			}
 
 			response.setContentType("application/json");
