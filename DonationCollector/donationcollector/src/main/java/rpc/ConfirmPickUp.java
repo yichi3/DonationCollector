@@ -8,8 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import db.ElasticSearchConnection;
-import entity.Item;
-import entity.Status;
 
 public class ConfirmPickUp extends HttpServlet {
 	
@@ -24,7 +22,6 @@ public class ConfirmPickUp extends HttpServlet {
 	
 	public ConfirmPickUp() {
         super();
-        // TODO Auto-generated constructor stub
     }
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -35,7 +32,6 @@ public class ConfirmPickUp extends HttpServlet {
 		connection.elasticSearchConnection();
 		
 		Map<String, Object> hit = connection.markItemComplete(itemId, ngoId);
-		// System.out.println(hit);
 		try {
 			connection.close();
 		} catch (Exception e) {

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import db.ElasticSearchConnection;
+import util.Email;
 
 /**
  * Servlet implementation class SchedulePickUp
@@ -57,6 +58,14 @@ public class SchedulePickUp extends HttpServlet {
 		if (hit.isEmpty()) {
 			response.sendError(404, "cannot find this item");
 			return;
+		}
+		Email emailNotification = new Email();
+		//System.out.println(hit);
+		try {
+			emailNotification.sendNotificationEmail(hit.get("itemName").toString(), hit.get("posterId").toString(), availablePickUpTime, pickUpNGOName);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		response.setStatus(204);
 	}

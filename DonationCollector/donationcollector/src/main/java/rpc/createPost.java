@@ -20,6 +20,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import db.ElasticSearchConnection;
+import db.GCSConnection;
 import entity.Category;
 import entity.GeoLocation;
 import entity.Item;
@@ -27,8 +29,6 @@ import entity.Status;
 import entity.User;
 import entity.UserType;
 import util.GeoCoding;
-import db.ElasticSearchConnection;
-import db.GCSConnection;
 
 /**
  * Servlet implementation class createPost
@@ -101,7 +101,6 @@ public class createPost extends HttpServlet {
 				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);
 
 				// Get lat and lon
-
 				GeoCoding geo = new GeoCoding();
 				GeoLocation loc = new GeoLocation(-1, -1);
 				try {
@@ -123,24 +122,20 @@ public class createPost extends HttpServlet {
 				// Save item to ES
 				ElasticSearchConnection esClient = new ElasticSearchConnection();
 				esClient.elasticSearchConnection();
-				Map<String, Object> esResponse = esClient.addItem(item);
-
+				Map<String, String> esResponse = esClient.addItem(item);
 				try {
 					esClient.close();
 				} catch (Exception e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-
-				if (esResponse.size() == 0) {
-					//response.sendError(503, "Failed to upload item info to elastic search");
-					//return;
+				if (esResponse.get("statusCode") == "503") {
+					response.sendError(503, "Failed to upload item info to elastic search");
+					return;
 				}
-				
-				response.setContentType("application/json");
-				response.getWriter().print(item.toJSONObject());
 			}
-			response.getWriter().write("You have successfully uploaded all items");
-			response.setStatus(200);
 		}
+		response.getWriter().write("You have successfully uploaded all items");
+		response.setStatus(200);
 	}
 }
