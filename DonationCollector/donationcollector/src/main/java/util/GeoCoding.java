@@ -12,7 +12,7 @@ import entity.GeoLocation;
 
 public class GeoCoding {
 	
-	private static final String API_KEY = "AIzaSyAhB-0E2ryt2Xd6SZqiRI-Yt3IKP30mUn4";
+	private static final String API_KEY = "Type YOUR API_KEY HERE";
 	
 	
 	public GeoLocation parseAddress(String address) throws ApiException, InterruptedException, IOException {
