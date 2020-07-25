@@ -285,7 +285,7 @@ public class ElasticSearchConnection {
 		queryString.append("{ctx._source.itemStatus = 'COLLECTED';}");
 
 		request.setScript(new Script(ScriptType.INLINE, "painless", queryString.toString(), Collections.emptyMap()));
-
+		System.out.print(queryString);
 		try {
 			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
 			System.out.print(bulkResponse);

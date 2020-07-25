@@ -33,6 +33,7 @@ public class Firebase {
 			conn.disconnect();
 			Gson gson = new Gson();
 			FirebaseUser firebaseUser = gson.fromJson(message, FirebaseUser.class);
+			System.out.println("userId:" + userId);
 			System.out.println("firebase user" + firebaseUser);
 			System.out.println("output" + message);
 			return firebaseUser;

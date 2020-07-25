@@ -35,6 +35,7 @@ public class Email {
 			System.out.println("\n\n 2nd ===> get Mail Session..");
 			getMailSession = Session.getDefaultInstance(mailServerProperties, null);
 			generateMailMessage = new MimeMessage(getMailSession);
+			System.out.println("email is: " + poster.getEmailAddress());
 			generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(poster.getEmailAddress()));
 			generateMailMessage.setSubject("Your item " + itemName + " will be collected on " + pickUpTime);
 			StringBuilder emailBodyBuilder = new StringBuilder();
