@@ -55,8 +55,8 @@ public class userPosts extends HttpServlet {
 		es.elasticSearchConnection();
 
 // 		3. convert db response
-		try {
-			
+		  try {
+		 
 			List<Map<String, Object>> dbResponse = es.queryItemByPosterId(userId);
 			System.out.println("got db response");
 			System.out.println("response number: " + dbResponse.size());
@@ -98,7 +98,7 @@ public class userPosts extends HttpServlet {
 
 				item.put("pickUpDate", post.get("pickUpTime"));
 				item.put("postDate", post.get("postDate"));
-				item.put("schedule", new JSONArray(post.get("availablePickUpTime")));
+				item.put("schedule", new JSONArray(post.get("availablePickUpTime")).toString());
 
 				items.put(item);
 
@@ -109,9 +109,11 @@ public class userPosts extends HttpServlet {
 			
 			es.close();
 			
-		}catch(Exception e) {
-			response.setStatus(503);
-			response.getWriter().write("Database error.");
+		} catch(Exception e) {
+			/*
+			 * response.setStatus(503); response.getWriter().write("Database error.");
+			 */
+			e.printStackTrace();
 		}
 	}
 }
