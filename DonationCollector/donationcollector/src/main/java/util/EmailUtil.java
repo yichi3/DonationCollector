@@ -1,5 +1,5 @@
 package util;
 
 public class EmailUtil {
-	static final String PASSWORD = "donationcollector111";
+	static final String PASSWORD = "";
 }
