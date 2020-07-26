@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import db.ElasticSearchConnection;
 
 /**
@@ -62,7 +61,7 @@ public class deleteItem extends HttpServlet {
 
 			Map<String, Object> dbResponse = es.deleteItem(itemId);
 			System.out.println("got db response");
-			
+
 			es.close();
 
 			if (dbResponse.size() == 0) {
@@ -70,7 +69,6 @@ public class deleteItem extends HttpServlet {
 				response.setStatus(400);
 				return;
 			}
-
 
 //			3. check whether the item belongs to the user
 

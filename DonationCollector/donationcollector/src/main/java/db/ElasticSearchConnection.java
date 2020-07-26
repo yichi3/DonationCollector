@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.http.HttpHost;
 import org.elasticsearch.action.index.IndexRequest;
@@ -77,9 +76,10 @@ public class ElasticSearchConnection {
 				builder.field("description", itemObj.getString("description"));
 				builder.field("availablePickUpTime", itemObj.getJSONArray("schedule"));
 				builder.field("itemStatus", itemObj.getString("status"));
-				builder.field("pickUpNGOId", new String());
-				builder.field("pickUpNGOName", new String());
-				builder.field("pickUpTime", itemObj.getString("pickUpDate"));
+				builder.field("pickUpNGOId", "");
+				builder.field("pickUpNGOName", "");
+				// Placeholder pickup time
+				builder.field("pickUpTime", "1999-01-01");
 				// to-fix hard-coded for now
 				builder.timeField("postDate", "2020-06-30");
 			}
@@ -88,7 +88,7 @@ public class ElasticSearchConnection {
 			IndexResponse response = client.index(indexRequest, RequestOptions.DEFAULT);
 
 			System.out.println("get results => " + response.getResult());
-			Map<String, String> statusCode = new HashMap<>();
+			Map<String, String> statusCode = new HashMap();
 			if (response.getResult().toString() == "CREATED") {
 				statusCode.put("statusCode", "200");
 			} else {
@@ -97,7 +97,7 @@ public class ElasticSearchConnection {
 			return statusCode;
 		} catch (Exception e) {
 			e.printStackTrace();
-			Map<String, String> statusCode = new HashMap<>();
+			Map<String, String> statusCode = new HashMap();
 			statusCode.put("statusCode", "503");
 			return statusCode;
 		}
@@ -241,7 +241,14 @@ public class ElasticSearchConnection {
 		try {
 			client.updateByQuery(request, RequestOptions.DEFAULT);
 			// System.out.println(bulkResponse);
-
+			try {
+				System.out.println("entering wait");
+				Thread.sleep(1200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("entering exception");
+				e1.printStackTrace();
+			}
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			System.out.println(queryResult);
 			return queryResult;
@@ -266,18 +273,21 @@ public class ElasticSearchConnection {
 
 		try {
 			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
-			System.out.print(bulkResponse);
-			TimeUnit.SECONDS.wait(1);
+			System.out.println(bulkResponse);
+			try {
+				System.out.println("entering wait");
+				Thread.sleep(1200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("entering exception");
+				e1.printStackTrace();
+			}
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			return queryResult;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			// Given error, return empty map
-			return new HashMap<String, Object>();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return new HashMap<String, Object>();
 		}
 	}
@@ -298,6 +308,14 @@ public class ElasticSearchConnection {
 		try {
 			BulkByScrollResponse bulkResponse = client.updateByQuery(request, RequestOptions.DEFAULT);
 			System.out.print(bulkResponse);
+			try {
+				System.out.println("entering wait");
+				Thread.sleep(1200);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				System.out.println("entering exception");
+				e1.printStackTrace();
+			}
 			Map<String, Object> queryResult = queryItemByItemId(itemId);
 			return queryResult;
 		} catch (IOException e) {

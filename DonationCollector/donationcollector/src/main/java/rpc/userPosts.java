@@ -40,12 +40,12 @@ public class userPosts extends HttpServlet {
 		System.out.println("in the method");
 //		1. get request userId
 
-		if(request.getParameter("userId") == null) {
+		if (request.getParameter("userId") == null) {
 			response.setStatus(404);
 			response.getWriter().write("Please indicate a user.");
 			return;
 		}
-		
+
 		String userId = request.getParameter("userId");
 		System.out.println("got userId");
 
@@ -55,15 +55,15 @@ public class userPosts extends HttpServlet {
 		es.elasticSearchConnection();
 
 // 		3. convert db response
-		  try {
-		 
+		try {
+
 			List<Map<String, Object>> dbResponse = es.queryItemByPosterId(userId);
 			System.out.println("got db response");
 			System.out.println("response number: " + dbResponse.size());
 			JSONArray items = new JSONArray();
 
 			for (Map<String, Object> post : dbResponse) {
-				if(((String)post.get("itemStatus")).equals("DELETED")) {
+				if (((String) post.get("itemStatus")).equals("DELETED")) {
 					continue;
 				}
 
@@ -71,26 +71,26 @@ public class userPosts extends HttpServlet {
 
 				item.put("itemId", post.get("itemId"));
 				item.put("urlToImage", post.get("urlToImage"));
-				
+
 				String locationLatLon = post.get("locationLatLon").toString();
 				List<String> latNLon = RpcHelper.parseLocation(locationLatLon);
 				item.put("lat", Double.parseDouble(latNLon.get(0)));
 				item.put("lon", Double.parseDouble(latNLon.get(1)));
-				
+
 				item.put("address", post.get("locationAddress"));
-				
+
 				JSONObject posterUser = new JSONObject();
 				posterUser.put("userId", post.get("posterId"));
 				posterUser.put("firstName", post.get("posterFirstName"));
 				posterUser.put("lastName", post.get("posterLastName"));
 				item.put("posterUser", posterUser);
-				
+
 				item.put("itemName", post.get("itemName"));
 				item.put("category", post.get("category"));
 				item.put("description", post.get("description"));
 				item.put("size", post.get("size"));
 				item.put("status", post.get("itemStatus"));
-				
+
 				JSONObject NGOUser = new JSONObject();
 				NGOUser.put("userId", post.get("pickUpNGOId"));
 				NGOUser.put("ngoName", post.get("pickUpNGOName"));
@@ -105,10 +105,10 @@ public class userPosts extends HttpServlet {
 
 			response.setContentType("application/json");
 			response.getWriter().print(items);
-			
+
 			es.close();
-			
-		} catch(Exception e) {
+
+		} catch (Exception e) {
 			/*
 			 * response.setStatus(503); response.getWriter().write("Database error.");
 			 */
