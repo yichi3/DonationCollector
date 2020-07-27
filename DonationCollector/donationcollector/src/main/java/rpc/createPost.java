@@ -93,7 +93,7 @@ public class createPost extends HttpServlet {
 						.firstName(userObj.getString("firstName")).lastName(userObj.getString("lastName"))
 						.userType(UserType.valueOf(userObj.getString("userType"))).email(userObj.getString("email"))
 						.address(userObj.getString("address")).build();
-
+				
 				// Generate item UUID
 				UUID itemId = UUID.randomUUID();
 

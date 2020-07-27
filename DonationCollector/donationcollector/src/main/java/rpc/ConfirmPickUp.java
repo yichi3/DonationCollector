@@ -50,7 +50,7 @@ public class ConfirmPickUp extends HttpServlet {
 			return;
 		} else {
 			System.out.println("other issues");
-			response.sendError(404, "Other errors, potentially DB");
+			response.sendError(503, "Other errors, potentially DB");
 			return;
 		}
 	}
