@@ -46,6 +46,12 @@
   	<description>NGO schedules PickUp</description>
   	<servlet-class>rpc.SchedulePickUp</servlet-class>
   </servlet>
+<servlet>
+	<servlet-name>NGOPosts</servlet-name>
+	<display-name>NGOPosts</display-name>
+	<description></description>
+	<servlet-class>rpc.NGOPosts</servlet-class>
+</servlet>
 
  <servlet-mapping>
   	<servlet-name>createPost</servlet-name>
@@ -76,5 +82,9 @@
   	<servlet-name>SchedulePickUp</servlet-name>
   	<url-pattern>/schedulePickUp</url-pattern>
   </servlet-mapping>
+<servlet-mapping>
+	<servlet-name>NGOPosts</servlet-name>
+	<url-pattern>/ngoPosts</url-pattern>
+</servlet-mapping>
 
 </web-app>
