@@ -99,8 +99,10 @@ public class SearchPostsNGO extends HttpServlet {
 				item.put("pickUpDate", post.get("pickUpTime"));
 //				item.put("postDate", post.get("postDate"));
 				item.put("schedule", new JSONArray(post.get("availablePickUpTime").toString()));
-
+				
+				resultArray.put(item);
 			}
+			
 			RpcHelper.writeJsonArray(response, resultArray);
 
 		} catch (ApiException | InterruptedException | IOException e) {
