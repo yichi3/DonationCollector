@@ -96,6 +96,7 @@ public class createPost extends HttpServlet {
 				
 				// Generate item UUID
 				UUID itemId = UUID.randomUUID();
+				System.out.println("itemId is: " + itemId);
 
 				// Save to GCS
 				String urlToImage = GCSConnection.uploadFile(itemImages.get(i), itemId);

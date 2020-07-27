@@ -49,13 +49,13 @@ public class NGOPosts extends HttpServlet {
 
 		// 3. parse hits
 		try {
-			List<Map<String, Object>> dbResponse = es.queryItemByNGOId(ngoId);
+			List<Map<String, Object>> dbResponse = es.queryItemByPickUpNGOId(ngoId);
 			System.out.println("got db response");
 			System.out.println("response number: " + dbResponse.size());
 			JSONArray items = new JSONArray();
 
 			for (Map<String, Object> post : dbResponse) {
-				if (((String) post.get("itemStatus")).equals("DELETED")) {
+				if (!((String) post.get("itemStatus")).equals("SCHEDULED")) {
 					continue;
 				}
 
