@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import db.ElasticSearchConnection;
+import entity.UserType;
 
 /**
  * Servlet implementation class UserPosts
@@ -77,13 +78,15 @@ public class userPosts extends HttpServlet {
 				List<String> latNLon = RpcHelper.parseLocation(locationLatLon);
 				item.put("lat", Double.parseDouble(latNLon.get(0)));
 				item.put("lon", Double.parseDouble(latNLon.get(1)));
-
 				item.put("address", post.get("locationAddress"));
 
 				JSONObject posterUser = new JSONObject();
 				posterUser.put("userId", post.get("posterId"));
 				posterUser.put("firstName", post.get("posterFirstName"));
 				posterUser.put("lastName", post.get("posterLastName"));
+				posterUser.put("userType", UserType.INDIVIDUAL);
+				posterUser.put("email", "null");
+				posterUser.put("address", "null");
 				item.put("posterUser", posterUser);
 
 				item.put("itemName", post.get("itemName"));
@@ -95,6 +98,9 @@ public class userPosts extends HttpServlet {
 				JSONObject NGOUser = new JSONObject();
 				NGOUser.put("userId", post.get("pickUpNGOId"));
 				NGOUser.put("ngoName", post.get("pickUpNGOName"));
+				NGOUser.put("userType", UserType.NGO);
+				NGOUser.put("email", "null");
+				NGOUser.put("address", "null");
 				item.put("NGOUser", NGOUser);
 
 				item.put("pickUpDate", post.get("pickUpTime"));
