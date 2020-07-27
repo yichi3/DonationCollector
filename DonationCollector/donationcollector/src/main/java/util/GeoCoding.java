@@ -11,28 +11,25 @@ import com.google.maps.model.LatLng;
 import entity.GeoLocation;
 
 public class GeoCoding {
-	
-	private static final String API_KEY = "COPY GOOGLE API_KEY HERE!!!";
-	
-	
+
+	private static final String API_KEY = "Type YOUR API_KEY HERE";
+
 	public GeoLocation parseAddress(String address) throws ApiException, InterruptedException, IOException {
-		
+
 		if (address == null || address.length() == 0) {
 			return null;
 		}
-		
-		GeoApiContext context = new GeoApiContext.Builder()
-			    .apiKey(API_KEY)
-			    .build();
-	
-		GeocodingResult[] request =  GeocodingApi.geocode(context, address).await();
+
+		GeoApiContext context = new GeoApiContext.Builder().apiKey(API_KEY).build();
+
+		GeocodingResult[] request = GeocodingApi.geocode(context, address).await();
 		LatLng location = request[0].geometry.location;
 		double lat = location.lat;
 		double lng = location.lng;
 		GeoLocation result = new GeoLocation(lat, lng);
 		return result;
 	}
-	
+
 //	public static void main(String[] args) throws ApiException, InterruptedException, IOException {
 //		String address = "2115 Westlake Ave, Seattle, WA 98121";
 //		double lat = parseAddress(address).getLat();
@@ -41,5 +38,3 @@ public class GeoCoding {
 //		System.out.println(lng);
 //	}
 }
-
-

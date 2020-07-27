@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import db.ElasticSearchConnection;
+import util.Email;
 
 /**
  * Servlet implementation class SchedulePickUp
@@ -44,7 +45,6 @@ public class SchedulePickUp extends HttpServlet {
 		String ngoId = request.getParameter("ngoId");
 		String pickUpNGOName = request.getParameter("ngoName");
 		String availablePickUpTime = request.getParameter("pickUpDate");
-		
 
 		ElasticSearchConnection connection = new ElasticSearchConnection();
 		connection.elasticSearchConnection();
@@ -58,7 +58,26 @@ public class SchedulePickUp extends HttpServlet {
 			response.sendError(404, "cannot find this item");
 			return;
 		}
-		response.setStatus(204);
+		String status = (String) hit.get("itemStatus");
+		String pickUpNGOId = (String) hit.get("pickUpNGOId");
+		if (status.contentEquals("SCHEDULED") && pickUpNGOId.contentEquals(ngoId)) {
+			response.getWriter().write("Sucessfully scheduled.");
+			response.setStatus(204);
+
+		} else {
+			response.sendError(404, "Cannot schedule pick up for this item");
+			return;
+		}
+		Email emailNotification = new Email();
+		// System.out.println(hit);
+		try {
+			emailNotification.sendNotificationEmail(hit.get("itemName").toString(), hit.get("posterId").toString(),
+					availablePickUpTime, pickUpNGOName);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
