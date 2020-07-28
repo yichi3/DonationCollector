@@ -3,8 +3,6 @@ package db;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 import org.apache.commons.fileupload.FileItem;
@@ -54,8 +52,10 @@ public class GCSConnection {
 		BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("image/jpeg").build();
 		storage.create(blobInfo, file.get());
 
-		String imgUrl = new StringBuilder().append(GCSUtil.prefix).append(GCSUtil.bucketName).append("/")
-				.append(fileName).toString();
+//		String imgUrl = new StringBuilder().append(GCSUtil.prefix).append(GCSUtil.bucketName).append("/")
+//				.append(fileName).toString();
+		
+		String imgUrl = new StringBuilder().append(GCSUtil.prefix).append(fileName).append(GCSUtil.postfix).toString();
 
 		return imgUrl;
 	}
