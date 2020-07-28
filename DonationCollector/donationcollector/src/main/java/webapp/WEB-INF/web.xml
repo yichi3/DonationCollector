@@ -5,86 +5,88 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
-  <servlet>
-  	<servlet-name>createPost</servlet-name>
-  	<display-name>createPost</display-name>
-  	<description>Create user posts</description>
-  	<servlet-class>rpc.createPost</servlet-class>
-  </servlet>
+	<servlet>
+		<servlet-name>createPost</servlet-name>
+		<display-name>createPost</display-name>
+		<description>Create user posts</description>
+		<servlet-class>rpc.createPost</servlet-class>
+	</servlet>
 
-<servlet>
-  	<servlet-name>ConfirmPickUp</servlet-name>
-  	<display-name>ConfirmPickUp</display-name>
-  	<description>NGO confirms pick up</description>
-  	<servlet-class>rpc.ConfirmPickUp</servlet-class>
-  </servlet>
+	<servlet>
+		<servlet-name>ConfirmPickUp</servlet-name>
+		<display-name>ConfirmPickUp</display-name>
+		<description>NGO confirms pick up</description>
+		<servlet-class>rpc.ConfirmPickUp</servlet-class>
+	</servlet>
 
-<servlet>
-  	<servlet-name>deleteItem</servlet-name>
-  	<display-name>deleteItem</display-name>
-  	<description>User deletes posted item</description>
-  	<servlet-class>rpc.deleteItem</servlet-class>
-  </servlet>
+	<servlet>
+		<servlet-name>deleteItem</servlet-name>
+		<display-name>deleteItem</display-name>
+		<description>User deletes posted item</description>
+		<servlet-class>rpc.deleteItem</servlet-class>
+	</servlet>
 
-<servlet>
-  	<servlet-name>SearchPostsNGO</servlet-name>
-  	<display-name>SearchPostsNGO</display-name>
-  	<description>NGO searches available posts</description>
-  	<servlet-class>rpc.SearchPostsNGO</servlet-class>
-  </servlet>
+	<servlet>
+		<servlet-name>SearchPostsNGO</servlet-name>
+		<display-name>SearchPostsNGO</display-name>
+		<description>NGO searches available posts</description>
+		<servlet-class>rpc.SearchPostsNGO</servlet-class>
+	</servlet>
 
-<servlet>
-  	<servlet-name>userPosts</servlet-name>
-  	<display-name>userPosts</display-name>
-  	<description>User queries all his/her posts</description>
-  	<servlet-class>rpc.userPosts</servlet-class>
-  </servlet>
+	<servlet>
+		<servlet-name>userPosts</servlet-name>
+		<display-name>userPosts</display-name>
+		<description>User queries all his/her posts</description>
+		<servlet-class>rpc.userPosts</servlet-class>
+	</servlet>
 
-<servlet>
-  	<servlet-name>SchedulePickUp</servlet-name>
-  	<display-name>SchedulePickUp</display-name>
-  	<description>NGO schedules PickUp</description>
-  	<servlet-class>rpc.SchedulePickUp</servlet-class>
-  </servlet>
-<servlet>
-	<servlet-name>NGOPosts</servlet-name>
-	<display-name>NGOPosts</display-name>
-	<description></description>
-	<servlet-class>rpc.NGOPosts</servlet-class>
-</servlet>
+	<servlet>
+		<servlet-name>SchedulePickUp</servlet-name>
+		<display-name>SchedulePickUp</display-name>
+		<description>NGO schedules PickUp</description>
+		<servlet-class>rpc.SchedulePickUp</servlet-class>
+	</servlet>
 
- <servlet-mapping>
-  	<servlet-name>createPost</servlet-name>
-  	<url-pattern>/createPost</url-pattern>
-  </servlet-mapping>
+	<servlet>
+		<servlet-name>createRoute</servlet-name>
+		<display-name>createRoute</display-name>
+		<description>Create optimal route</description>
+		<servlet-class>rpc.createRoute</servlet-class>
+	</servlet>
 
-<servlet-mapping>
-  	<servlet-name>ConfirmPickUp</servlet-name>
-  	<url-pattern>/confirmPickUp</url-pattern>
-  </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>createPost</servlet-name>
+		<url-pattern>/createPost</url-pattern>
+	</servlet-mapping>
 
-<servlet-mapping>
-  	<servlet-name>deleteItem</servlet-name>
-  	<url-pattern>/deleteItem</url-pattern>
-  </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ConfirmPickUp</servlet-name>
+		<url-pattern>/confirmPickUp</url-pattern>
+	</servlet-mapping>
 
-<servlet-mapping>
-  	<servlet-name>SearchPostsNGO</servlet-name>
-  	<url-pattern>/searchPostsNGO</url-pattern>
-  </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>deleteItem</servlet-name>
+		<url-pattern>/deleteItem</url-pattern>
+	</servlet-mapping>
 
-<servlet-mapping>
-  	<servlet-name>userPosts</servlet-name>
-  	<url-pattern>/userPosts</url-pattern>
-  </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SearchPostsNGO</servlet-name>
+		<url-pattern>/searchPostsNGO</url-pattern>
+	</servlet-mapping>
 
-<servlet-mapping>
-  	<servlet-name>SchedulePickUp</servlet-name>
-  	<url-pattern>/schedulePickUp</url-pattern>
-  </servlet-mapping>
-<servlet-mapping>
-	<servlet-name>NGOPosts</servlet-name>
-	<url-pattern>/ngoPosts</url-pattern>
-</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>userPosts</servlet-name>
+		<url-pattern>/userPosts</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>SchedulePickUp</servlet-name>
+		<url-pattern>/schedulePickUp</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>createRoute</servlet-name>
+		<url-pattern>/createRoute</url-pattern>
+	</servlet-mapping>
 
 </web-app>
