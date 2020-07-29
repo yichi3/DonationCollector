@@ -86,7 +86,7 @@ public class createRoute extends HttpServlet {
 		}
 		
 		result.put("route", route);
-		result.put("steps", Integer.toString(--count)); 
+		result.put("steps", Integer.toString(count)); 
 		RpcHelper.writeJsonObject(response, result);
 	}
 
