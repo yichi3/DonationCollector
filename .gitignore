@@ -3,3 +3,5 @@ apache-tomcat-9.0.36/conf/server.xml
 apache-tomcat-9.0.36/logs
 DonationCollector/donationcollector/src/main/java/util/EmailUtil.java
 DonationCollector/donationcollector/src/main/java/util/GeoCodingUtil.java
+DonationCollector/donationcollector/src/main/java/util/DirectionsAPICredentials.java
+DonationCollector/donationcollector/src/main/java/util/GrasshopperCredentials.java
